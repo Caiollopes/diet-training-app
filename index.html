@@ -22,28 +22,29 @@
   </head>
   <body>
     <main class="home">
-      <div>
-        <h1>Construa sua melhor versão</h1>
-        <p>Organize sua dieta em um só lugar</p>
+      <div class="home-content">
+        <!-- Hero Section -->
+        <div class="hero-section">
+          <h1 class="hero-title">Construa sua melhor versão</h1>
+          <p class="hero-subtitle">
+            Organize sua dieta de forma simples e eficiente
+          </p>
 
-        <a href="register.html" class="btn-primary btn-small">Comece já</a>
-      </div>
+          <div class="hero-actions">
+            <a href="register.html" class="btn-primary btn-large">
+              <i class="fas fa-rocket"></i>
+              Comece agora
+            </a>
 
-      <div class="login">
-        <p>Já cadastrou sua dieta?</p>
-
-        <input type="tel" id="phoneLookup" placeholder="(xx) xxxxx-xxxx" />
-
-        <div>
-          <a id="accessBtn" class="btn-primary btn-small">Acessar</a>
-          <p id="homeError" class="error hidden">Telefone não encontrado</p>
+            <a href="login.html" class="btn-secondary btn-large">
+              <i class="fas fa-sign-in-alt"></i>
+              Já tenho conta
+            </a>
+          </div>
         </div>
       </div>
     </main>
 
     <script src="js/darkmode.js"></script>
-    <!-- Supabase Client -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <script type="module" src="js/home.js"></script>
   </body>
 </html>

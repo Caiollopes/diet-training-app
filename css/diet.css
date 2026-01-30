@@ -1,4 +1,202 @@
 /* ==================================================
+   PAGE LAYOUT
+================================================== */
+.page-wrapper {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 20px;
+  background: var(--bg-primary);
+}
+
+.page-container {
+  max-width: 900px;
+  width: 100%;
+}
+
+.page-header {
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-actions {
+  display: flex;
+  flex-direction: row;
+  /* gap: 12px; */
+  align-items: center;
+  justify-content: center;
+  /* padding: 10rem; */
+}
+
+.header-actions button {
+  padding: 10px 16px;
+  font-size: 14px;
+}
+
+.header-actions .btn-primary,
+.header-actions .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.back-link:hover {
+  color: var(--text-primary);
+  transform: translateX(-4px);
+}
+
+.page-content {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  padding: 40px;
+}
+
+.page-title-section {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.page-icon {
+  width: 80px;
+  height: 80px;
+  background: var(--button-primary);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.page-icon i {
+  font-size: 32px;
+  color: white;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.page-subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+}
+
+.page-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 32px;
+  padding-top: 32px;
+  border-top: 2px solid var(--border-color);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-group i {
+  position: absolute;
+  left: 16px;
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+
+.input-group input {
+  padding-left: 48px;
+}
+
+.btn-block {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* ==================================================
+   DIET NAME INPUT
+================================================== */
+.diet-name-section {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.diet-periods-section {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.diet-periods-section.hidden,
+.diet-name-section.hidden {
+  display: none;
+}
+
+.name-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 400px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.diet-name-input {
+  padding: 16px 20px;
+  font-size: 16px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.diet-name-input:focus {
+  outline: none;
+  border-color: var(--button-primary);
+}
+
+.diet-name-input::placeholder {
+  color: var(--text-secondary);
+}
+
+.name-input-group button {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* ==================================================
    DIET
 ================================================== */
 .period-buttons {
@@ -11,22 +209,31 @@
 .period-buttons button {
   background: var(--button-secondary);
   color: var(--text-primary);
-  padding: 10px 16px;
+  padding: 10px 18px;
   border-radius: 999px;
+  border: 2px solid var(--border-color);
   font-size: 14px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.period-buttons button:hover {
+  border-color: var(--button-primary);
+  color: var(--button-primary);
 }
 
 .period-buttons button.active {
   background: var(--button-primary);
   color: white;
+  border-color: var(--button-primary);
 }
 
 .period {
   background: var(--bg-secondary);
-  border-radius: 16px;
+  border-radius: 12px;
+  border: 2px solid var(--border-color);
   padding: 20px;
   margin-bottom: 16px;
-  box-shadow: 0 12px 25px var(--shadow);
 }
 
 .period-header {
@@ -48,19 +255,20 @@
 }
 
 .btn-move {
-  background: var(--bg-tertiary);
+  background: var(--button-secondary);
   color: var(--text-primary);
   padding: 6px 10px;
   border-radius: 6px;
+  border: 2px solid var(--border-color);
   font-size: 14px;
-  min-width: 32px;
-  font-weight: bold;
-  transition: all 0.2s;
+  min-width: 36px;
+  font-weight: 700;
+  transition: all 0.2s ease;
 }
 
 .btn-move:hover {
   background: var(--button-secondary-hover);
-  transform: scale(1.05);
+  border-color: var(--text-primary);
 }
 
 .period-header input[type="time"] {
@@ -83,26 +291,30 @@
 
 .meal-form button {
   width: 44px;
-  border-radius: 10px;
-  background: #22c55e;
+  border-radius: 8px;
+  background: var(--accent-green);
   color: white;
-  font-size: 18px;
-  transition: all 0.3s;
-  font-weight: 600;
+  font-size: 20px;
+  transition: all 0.2s ease;
+  font-weight: 700;
+  border: 2px solid transparent;
 }
 
 .meal-form button:hover {
-  background: #16a34a;
+  background: var(--accent-green-hover);
+  transform: translateY(-1px);
 }
 
 .meal-form button.btn-save-mode {
-  background: #2563eb;
+  background: var(--button-primary);
   width: auto;
-  padding: 10px 16px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .meal-form button.btn-save-mode:hover {
-  background: #1e40af;
+  background: var(--button-primary-hover);
 }
 
 .meal-list {
@@ -117,14 +329,20 @@
   align-items: center;
   background: var(--bg-tertiary);
   padding: 12px 14px;
-  border-radius: 10px;
+  border-radius: 8px;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.meal-item:hover {
+  border-color: var(--border-color);
 }
 
 .meal-content {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex: 0;
+  gap: 12px;
+  /* flex: 1; */
 }
 
 .meal-text {
@@ -133,17 +351,19 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: var(--text-primary);
+  font-weight: 500;
 }
 
 .meal-qty {
-  background: #2563eb;
+  background: var(--button-primary);
   color: white;
-  padding: 6px 12px;
+  padding: 6px 14px;
   border-radius: 6px;
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   white-space: nowrap;
-  flex: 0;
+  flex-shrink: 0;
 }
 
 .meal-buttons {
@@ -166,19 +386,19 @@
 }
 
 .btn-edit:hover {
-  color: #2563eb;
+  color: var(--button-primary);
 }
 
 .btn-delete:hover {
-  color: #dc2626;
+  color: var(--accent-red);
 }
 
 .btn-save:hover {
-  color: #22c55e;
+  color: var(--accent-green);
 }
 
 .btn-cancel:hover {
-  color: #f59e0b;
+  color: var(--accent-orange);
 }
 
 .edit-meal,
@@ -194,18 +414,43 @@
 
 #saveDiet {
   width: 100%;
-  margin-top: 24px;
+  /* margin-top: 24px; */
 }
 
 /* ==================================================
    RESPONSIVO
 ================================================== */
 @media (max-width: 768px) {
+  .page-content {
+    padding: 32px 24px;
+  }
+
+  .page-title {
+    font-size: 24px;
+  }
+
+  .page-subtitle {
+    font-size: 14px;
+  }
+
+  .page-icon {
+    width: 64px;
+    height: 64px;
+  }
+
+  .page-icon i {
+    font-size: 28px;
+  }
+
   .meal-form {
     flex-direction: column;
   }
 
   .meal-form button {
     width: 100%;
+  }
+
+  .page-actions {
+    flex-direction: column;
   }
 }

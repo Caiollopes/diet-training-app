@@ -38,19 +38,45 @@ export async function createUser(name, phone) {
   return { data, error };
 }
 
-export async function saveDiet(phone, diet, periods) {
-  const { data, error } = await supabase
+export async function saveDiet(phone, planName, diet, periods) {
+  const { data: existingData } = await supabase
     .from("diets")
-    .upsert([
-      {
-        phone,
-        diet_data: diet,
-        period_order: periods,
-        updated_at: new Date(),
-      },
-    ])
-    .select()
+    .select("plans")
+    .eq("phone", phone)
     .single();
+
+  let plans = existingData?.plans || [];
+
+  // Se é um novo plano ou atualizar existente
+  const planIndex = plans.findIndex((p) => p.name === planName);
+
+  const planData = {
+    name: planName,
+    diet_data: diet,
+    period_order: periods,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (planIndex >= 0) {
+    plans[planIndex] = planData;
+  } else {
+    plans.push(planData);
+  }
+
+  const { data, error } = await supabase.from("diets").upsert(
+    {
+      phone,
+      plans: plans,
+      updated_at: new Date().toISOString(),
+    },
+    { onConflict: "phone" },
+  );
+
+  if (error) {
+    console.error("Erro ao salvar dieta:", error);
+  } else {
+    console.log("Dieta salva com sucesso:", data);
+  }
 
   return { data, error };
 }
@@ -63,4 +89,12 @@ export async function getDiet(phone) {
     .single();
 
   return { data, error };
+}
+
+export async function getPlanByName(phone, planName) {
+  const { data } = await getDiet(phone);
+
+  if (!data || !data.plans) return null;
+
+  return data.plans.find((p) => p.name === planName) || null;
 }

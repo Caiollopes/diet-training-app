@@ -2,13 +2,13 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <title>Cadastro</title>
+    <title>Login - Dieta & Treino</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
     <link rel="stylesheet" href="css/base.css" />
-    <link rel="stylesheet" href="css/register.css" />
+    <link rel="stylesheet" href="css/login.css" />
     <script>
       // Aplicar dark mode antes da página renderizar
       const darkMode = localStorage.getItem("darkMode");
@@ -35,30 +35,40 @@
         <div class="page-content">
           <div class="page-title-section">
             <div class="page-icon">
-              <i class="fas fa-user-plus"></i>
+              <i class="fas fa-sign-in-alt"></i>
             </div>
-            <h1 class="page-title">Crie sua conta</h1>
-            <p class="page-subtitle">Cadastre-se para começar</p>
+            <h1 class="page-title">Acesse sua dieta</h1>
+            <p class="page-subtitle">Digite seu telefone para continuar</p>
           </div>
 
-          <div class="form-group">
-            <input type="text" id="name" placeholder="Seu nome" />
-            <input type="tel" id="phone" placeholder="(xx) xxxxx-xxxx" />
-            <p id="registerWarn" class="warn hidden">
-              <i class="fas fa-exclamation-triangle"></i>
-              Este telefone já está cadastrado. Use outro número.
+          <form class="form-group">
+            <div class="input-group">
+              <i class="fas fa-phone"></i>
+              <input
+                type="tel"
+                id="phoneLookup"
+                placeholder="(xx) xxxxx-xxxx"
+                autocomplete="tel"
+              />
+            </div>
+
+            <button type="button" id="accessBtn" class="btn-primary btn-block">
+              <i class="fas fa-arrow-right"></i>
+              Acessar minha dieta
+            </button>
+
+            <p id="homeError" class="error hidden">
+              <i class="fas fa-exclamation-circle"></i>
+              Telefone não encontrado
             </p>
-          </div>
+          </form>
 
-          <div class="page-actions">
-            <button id="save" class="btn-primary btn-block">
-              <i class="fas fa-check"></i>
-              Criar conta
-            </button>
-            <button id="cancel" class="btn-secondary btn-block">
-              <i class="fas fa-times"></i>
-              Cancelar
-            </button>
+          <div class="page-footer">
+            <p>Ainda não tem cadastro?</p>
+            <a href="register.html" class="link-primary">
+              Crie sua conta agora
+              <i class="fas fa-arrow-right"></i>
+            </a>
           </div>
         </div>
       </div>
@@ -67,6 +77,6 @@
     <script src="js/darkmode.js"></script>
     <!-- Supabase Client -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <script type="module" src="js/register.js"></script>
+    <script type="module" src="js/home.js"></script>
   </body>
 </html>

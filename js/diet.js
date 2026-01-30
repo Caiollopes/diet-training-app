@@ -8,23 +8,73 @@ const rendered = {};
 let periodOrder = null;
 let editingMeal = null;
 let editingPeriod = null;
+let currentPlanName = "";
 
 const buttons = document.querySelectorAll("[data-period]");
 const container = document.getElementById("periodsContainer");
 const saveBtn = document.getElementById("saveDiet");
+const dietNameInput = document.getElementById("dietNameInput");
+const nextBtn = document.getElementById("nextBtn");
+const dietNameSection = document.getElementById("dietNameSection");
+const dietPeriodsSection = document.getElementById("dietPeriodsSection");
+const dietNameDisplay = document.getElementById("dietNameDisplay");
+
+// Mostrar skeleton loader
+showSkeleton();
 
 // Carregar dieta do Supabase
 loadDiet();
 
-async function loadDiet() {
-  const { data } = await getDiet(phone);
+function showSkeleton() {
+  const container = document.getElementById("periodsContainer");
+  container.innerHTML = `
+    <div class="skeleton-buttons">
+      <div class="skeleton skeleton-button"></div>
+      <div class="skeleton skeleton-button"></div>
+      <div class="skeleton skeleton-button"></div>
+      <div class="skeleton skeleton-button"></div>
+    </div>
+  `;
+}
 
-  if (data) {
-    dietState = data.diet_data || {};
-    periodOrder = data.period_order || [];
-  } else {
+async function loadDiet() {
+  // Limpa skeleton
+  document.getElementById("periodsContainer").innerHTML = "";
+
+  const isNewPlan = localStorage.getItem("newPlan") === "true";
+  const currentPlan = localStorage.getItem("currentPlan");
+
+  if (isNewPlan) {
+    // Criar novo plano vazio
     dietState = {};
     periodOrder = [];
+    currentPlanName = "";
+    localStorage.removeItem("newPlan");
+    dietNameSection.classList.remove("hidden");
+    dietPeriodsSection.classList.add("hidden");
+  } else {
+    // Carregar plano existente
+    const { data } = await getDiet(phone);
+
+    if (data && data.plans && data.plans.length > 0) {
+      // Se tem um plano atual definido, carrega ele, senão carrega o primeiro
+      const planName = currentPlan || data.plans[0].name;
+      const plan = data.plans.find((p) => p.name === planName) || data.plans[0];
+
+      localStorage.setItem("currentPlan", plan.name);
+      currentPlanName = plan.name;
+      dietState = plan.diet_data || {};
+      periodOrder = plan.period_order || [];
+      dietNameSection.classList.add("hidden");
+      dietPeriodsSection.classList.remove("hidden");
+      dietNameDisplay.textContent = `Editando: ${plan.name}`;
+    } else {
+      dietState = {};
+      periodOrder = [];
+      currentPlanName = "";
+      dietNameSection.classList.remove("hidden");
+      dietPeriodsSection.classList.add("hidden");
+    }
   }
 
   init();
@@ -46,6 +96,26 @@ function init() {
   toggleSaveButton();
 }
 
+// Botão próximo do input de nome
+nextBtn.onclick = () => {
+  const name = dietNameInput.value.trim();
+  if (!name) {
+    alert("Digite um nome para seu plano!");
+    return;
+  }
+  currentPlanName = name;
+  dietNameSection.classList.add("hidden");
+  dietPeriodsSection.classList.remove("hidden");
+  dietNameDisplay.textContent = `Plano: ${name}`;
+};
+
+// Enter no input de nome
+dietNameInput.onkeypress = (e) => {
+  if (e.key === "Enter") {
+    nextBtn.click();
+  }
+};
+
 buttons.forEach((btn) => {
   btn.onclick = () => {
     const period = btn.dataset.period;
@@ -53,6 +123,11 @@ buttons.forEach((btn) => {
 
     if (isActive) {
       delete dietState[period];
+      // Remove do periodOrder
+      const index = periodOrder.indexOf(period);
+      if (index > -1) {
+        periodOrder.splice(index, 1);
+      }
       if (rendered[period]) {
         container.removeChild(rendered[period]);
         delete rendered[period];
@@ -61,6 +136,11 @@ buttons.forEach((btn) => {
     } else {
       if (!dietState[period]) {
         dietState[period] = { time: "00:00", meals: [] };
+      }
+
+      // Adiciona ao periodOrder se não existir
+      if (!periodOrder.includes(period)) {
+        periodOrder.push(period);
       }
 
       if (!rendered[period]) {
@@ -225,6 +305,25 @@ function toggleSaveButton() {
 }
 
 saveBtn.onclick = async () => {
-  await saveDiet(phone, dietState, periodOrder);
+  console.log("Salvando dieta:", dietState);
+  console.log("Ordem dos períodos:", periodOrder);
+
+  const planName = currentPlanName.trim();
+  if (!planName) {
+    alert("Nome do plano é obrigatório!");
+    return;
+  }
+
+  localStorage.setItem("currentPlan", planName);
+  const { error } = await saveDiet(phone, planName, dietState, periodOrder);
+
+  if (error) {
+    alert("Erro ao salvar dieta! Tente novamente.");
+    return;
+  }
+
+  // Aguardar um pouco para o Supabase replicar os dados
+  await new Promise((resolve) => setTimeout(resolve, 800));
+
   window.location.href = "dashboard.html";
 };

@@ -82,11 +82,40 @@
   margin-top: 32px;
 }
 
+.page-footer {
+  padding-top: 24px;
+  border-top: 2px solid var(--border-color);
+  text-align: center;
+}
+
+.page-footer p {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 16px;
   margin-bottom: 24px;
+}
+
+.input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-group i {
+  position: absolute;
+  left: 16px;
+  color: var(--text-secondary);
+  font-size: 16px;
+}
+
+.input-group input {
+  padding-left: 48px;
 }
 
 .btn-block {
@@ -97,22 +126,37 @@
   gap: 10px;
 }
 
-.warn {
-  color: var(--accent-orange);
+.error {
+  color: var(--accent-red);
   font-size: 14px;
   font-weight: 500;
   padding: 12px;
   background: var(--bg-tertiary);
   border-radius: 8px;
-  border: 2px solid var(--accent-orange);
+  border: 2px solid var(--accent-red);
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
 }
 
-.warn.hidden {
+.error.hidden {
   display: none;
+}
+
+.link-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--button-primary);
+  font-weight: 600;
+  font-size: 15px;
+  transition: all 0.2s ease;
+}
+
+.link-primary:hover {
+  color: var(--button-primary-hover);
+  gap: 12px;
 }
 
 /* ==================================================

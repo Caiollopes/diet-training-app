@@ -4,9 +4,7 @@ function initDarkMode() {
   const saved = localStorage.getItem("darkMode");
   const isDarkMode = saved ? saved === "true" : prefersDark;
 
-  if (isDarkMode) {
-    document.body.classList.add("dark-mode");
-  }
+  applyTheme(isDarkMode);
 
   // Mostrar botão apenas na página de início
   if (
@@ -34,7 +32,8 @@ function createThemeToggle() {
 }
 
 function toggleDarkMode() {
-  const isDark = document.body.classList.toggle("dark-mode");
+  const isDark = !document.body.classList.contains("dark-mode");
+  applyTheme(isDark);
   localStorage.setItem("darkMode", isDark);
 
   const btn = document.querySelector(".theme-toggle");
@@ -42,6 +41,24 @@ function toggleDarkMode() {
     ? '<i class="fas fa-sun"></i>'
     : '<i class="fas fa-moon"></i>';
   btn.title = isDark ? "Modo claro" : "Modo escuro";
+}
+
+function applyTheme(isDark) {
+  document.body.classList.toggle("dark-mode", isDark);
+  document.documentElement.style.colorScheme = isDark ? "dark" : "light";
+  if (!isDark) {
+    removeInlineDarkStyle();
+  }
+}
+
+function removeInlineDarkStyle() {
+  const styles = [...document.querySelectorAll("style")];
+  styles.forEach((style) => {
+    const text = style.textContent || "";
+    if (text.includes("body { background: #1f2937")) {
+      style.remove();
+    }
+  });
 }
 
 // Initialize on page load

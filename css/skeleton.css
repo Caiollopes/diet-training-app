@@ -1,0 +1,57 @@
+/* ==================================================
+   SKELETON LOADER
+================================================== */
+.skeleton {
+  background: var(--bg-tertiary);
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+@keyframes skeleton-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Dashboard Skeletons */
+.skeleton-period {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  border: 2px solid var(--border-color);
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+.skeleton-title {
+  height: 24px;
+  width: 200px;
+  margin-bottom: 16px;
+}
+
+.skeleton-meal {
+  height: 48px;
+  margin-bottom: 8px;
+  border-radius: 10px;
+}
+
+.skeleton-meal:last-child {
+  margin-bottom: 0;
+}
+
+/* Diet Skeletons */
+.skeleton-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.skeleton-button {
+  height: 40px;
+  width: 120px;
+  border-radius: 999px;
+}

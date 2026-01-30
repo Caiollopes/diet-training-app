@@ -2,33 +2,53 @@
    RESET + BASE
 ================================================== */
 :root {
-  --bg-primary: #f3f4f6;
-  --bg-secondary: #ffffff;
-  --bg-tertiary: #e5e7eb;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #e2e8f0;
 
-  --text-primary: #111827;
-  --text-secondary: #4b5563;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
 
-  --border-color: #d1d5db;
-  --shadow: rgba(0, 0, 0, 0.05);
+  --border-color: #cbd5e1;
 
-  --button-primary: #2563eb;
-  --button-primary-hover: #1e40af;
+  --button-primary: #3b82f6;
+  --button-primary-hover: #2563eb;
 
-  --button-secondary: #e5e7eb;
-  --button-secondary-text: #111827;
-  --button-secondary-hover: #d1d5db;
+  --button-secondary: #f1f5f9;
+  --button-secondary-text: #0f172a;
+  --button-secondary-hover: #e2e8f0;
+
+  --accent-green: #10b981;
+  --accent-green-hover: #059669;
+  --accent-red: #ef4444;
+  --accent-red-hover: #dc2626;
+  --accent-orange: #f59e0b;
+  --accent-purple: #8b5cf6;
 }
 
 body.dark-mode {
-  --bg-primary: #1f2937;
-  --bg-secondary: #2d3748;
-  --bg-tertiary: #4b5563;
-  --text-primary: #f3f4f6;
-  --text-secondary: #d1d5db;
-  --border-color: #4b5563;
-  --shadow: rgba(0, 0, 0, 0.3);
-  --button-secondary-text: #f3f4f6;
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+
+  --border-color: #475569;
+
+  --button-primary: #3b82f6;
+  --button-primary-hover: #60a5fa;
+
+  --button-secondary: #334155;
+  --button-secondary-text: #f1f5f9;
+  --button-secondary-hover: #475569;
+
+  --accent-green: #10b981;
+  --accent-green-hover: #34d399;
+  --accent-red: #ef4444;
+  --accent-red-hover: #f87171;
+  --accent-orange: #f59e0b;
+  --accent-purple: #8b5cf6;
 }
 
 * {
@@ -95,29 +115,36 @@ button {
 
 .btn-primary {
   background: var(--button-primary);
-  color: #fff;
+  color: #ffffff;
   padding: 12px 20px;
-  border-radius: 10px;
+  border-radius: 8px;
   font-size: 15px;
   display: block;
   align-items: center;
   text-align: center;
-  font-weight: 500;
+  font-weight: 600;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
 }
 
 .btn-primary:hover {
   background: var(--button-primary-hover);
+  transform: translateY(-1px);
 }
 
 .btn-secondary {
   background: var(--button-secondary);
   color: var(--button-secondary-text);
   padding: 12px 20px;
-  border-radius: 10px;
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
 .btn-secondary:hover {
   background: var(--button-secondary-hover);
+  border-color: var(--text-secondary);
 }
 
 .hidden {
@@ -129,17 +156,19 @@ button {
 ================================================== */
 input {
   width: 100%;
-  padding: 12px;
-  border-radius: 10px;
-  border: 1px solid var(--border-color);
+  padding: 12px 16px;
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
   font-size: 14px;
   background: var(--bg-secondary);
   color: var(--text-primary);
+  transition: all 0.2s ease;
 }
 
 input:focus {
   outline: none;
   border-color: var(--button-primary);
+  background: var(--bg-primary);
 }
 
 /* ==================================================
@@ -151,8 +180,8 @@ input:focus {
   left: 20px;
   background: var(--button-primary);
   color: white;
-  border: none;
-  border-radius: 50%;
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
   width: 50px;
   height: 50px;
   cursor: pointer;
@@ -160,12 +189,11 @@ input:focus {
   align-items: center;
   justify-content: center;
   font-size: 20px;
-  box-shadow: 0 4px 12px var(--shadow);
-  transition: all 0.3s;
+  transition: all 0.2s ease;
   z-index: 1000;
 }
 
 .theme-toggle:hover {
   background: var(--button-primary-hover);
-  transform: scale(1.1);
+  transform: translateY(-2px);
 }

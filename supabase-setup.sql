@@ -13,6 +13,7 @@ CREATE TABLE users (
 CREATE TABLE diets (
   id BIGINT PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
   phone TEXT UNIQUE NOT NULL REFERENCES users(phone) ON DELETE CASCADE,
+  plans JSONB NOT NULL DEFAULT '[]',
   diet_data JSONB NOT NULL DEFAULT '{}',
   period_order TEXT[] NOT NULL DEFAULT '{}',
   updated_at TIMESTAMP DEFAULT NOW()
@@ -23,9 +24,8 @@ CREATE INDEX idx_users_phone ON users(phone);
 CREATE INDEX idx_diets_phone ON diets(phone);
 
 -- Habilitar RLS (Row Level Security)
-ALTER TABLE users ENABLE ROW LEVEL SECURITY;
-ALTER TABLE diets ENABLE ROW LEVEL SECURITY;
+ALTER TABLE users DISABLE ROW LEVEL SECURITY;
+ALTER TABLE diets DISABLE ROW LEVEL SECURITY;
 
--- Políticas para acesso público (cuidado em produção!)
-CREATE POLICY "Allow all on users" ON users FOR ALL USING (true) WITH CHECK (true);
-CREATE POLICY "Allow all on diets" ON diets FOR ALL USING (true) WITH CHECK (true);
+-- Nota: Para produção, implemente políticas RLS adequadas
+-- Por enquanto, RLS está desabilitado para desenvolvimento

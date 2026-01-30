@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Minha Dieta - Dieta & Treino</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/user-home.css" />
+    <script>
+      // Aplicar dark mode antes da página renderizar
+      const darkMode = localStorage.getItem("darkMode");
+      if (darkMode === "true") {
+        document.documentElement.style.colorScheme = "dark";
+        document.write(
+          "<style>body { background: #1f2937; color: #f3f4f6; }</style>",
+        );
+      }
+    </script>
+  </head>
+  <body>
+    <main class="user-home-page">
+      <div class="user-home-container">
+        <!-- Header -->
+        <div class="user-home-header">
+          <button id="logoutBtn" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            Sair
+          </button>
+        </div>
+
+        <!-- Welcome Section -->
+        <div class="user-home-content">
+          <div class="welcome-section">
+            <div class="welcome-icon">
+              <i class="fas fa-user-circle"></i>
+            </div>
+            <h1 id="userName" class="welcome-title">Bem-vindo!</h1>
+            <p class="welcome-subtitle">Gerencie sua dieta e metas</p>
+          </div>
+
+          <!-- Actions Grid -->
+          <div class="actions-grid">
+            <a href="dashboard.html" class="action-card">
+              <div class="action-icon">
+                <i class="fas fa-eye"></i>
+              </div>
+              <h3 class="action-title">Visualizar</h3>
+              <p class="action-desc">Veja seu plano alimentar</p>
+            </a>
+
+            <button id="createNewBtn" class="action-card">
+              <div class="action-icon">
+                <i class="fas fa-plus"></i>
+              </div>
+              <h3 class="action-title">Novo Plano</h3>
+              <p class="action-desc">Crie um novo plano</p>
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <script src="js/darkmode.js"></script>
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script type="module" src="js/user-home.js"></script>
+  </body>
+</html>
