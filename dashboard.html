@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="./css/base.css" />
+    <link rel="stylesheet" href="./css/dashboard.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+      // Aplicar dark mode antes da página renderizar
+      const darkMode = localStorage.getItem("darkMode");
+      if (darkMode === "true") {
+        document.documentElement.style.colorScheme = "dark";
+        document.write(
+          "<style>body { background: #1f2937; color: #f3f4f6; }</style>",
+        );
+      }
+    </script>
+  </head>
+  <body>
+    <section class="container">
+      <div class="dash-header">
+        <h2 id="username"></h2>
+        <div class="dash-actions">
+          <button id="editDiet" class="btn-primary">
+            <i class="fas fa-edit"></i> Editar
+          </button>
+          <button id="downloadPDF" class="btn-secondary">
+            <i class="fas fa-file-pdf"></i> Baixar PDF
+          </button>
+          <a href="index.html" class="btn-primary"
+            ><i class="fas fa-home"></i> Início</a
+          >
+        </div>
+      </div>
+      <div id="dietView" class="dashboard"></div>
+    </section>
+
+    <script src="js/darkmode.js"></script>
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script type="module" src="js/dashboard.js"></script>
+  </body>
+</html>

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Cadastro</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/register.css" />
+    <script>
+      // Aplicar dark mode antes da página renderizar
+      const darkMode = localStorage.getItem("darkMode");
+      if (darkMode === "true") {
+        document.documentElement.style.colorScheme = "dark";
+        document.write(
+          "<style>body { background: #1f2937; color: #f3f4f6; }</style>",
+        );
+      }
+    </script>
+  </head>
+  <body>
+    <main class="container">
+      <h2>Cadastro rápido</h2>
+
+      <input type="text" id="name" placeholder="Seu nome" />
+      <input type="tel" id="phone" placeholder="(xx) xxxxx-xxxx" />
+      <p id="registerWarn" class="warn hidden">
+        Este telefone já está cadastrado. Use outro número.
+      </p>
+
+      <button id="save" class="btn-primary">Salvar</button>
+      <button id="cancel" class="btn-secondary">Cancelar</button>
+    </main>
+
+    <script src="js/darkmode.js"></script>
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script type="module" src="js/register.js"></script>
+  </body>
+</html>

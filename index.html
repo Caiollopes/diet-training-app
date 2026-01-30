@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dieta & Treino</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/home.css" />
+    <script>
+      // Aplicar dark mode antes da página renderizar
+      const darkMode = localStorage.getItem("darkMode");
+      if (darkMode === "true") {
+        document.documentElement.style.colorScheme = "dark";
+        document.write(
+          "<style>body { background: #1f2937; color: #f3f4f6; }</style>",
+        );
+      }
+    </script>
+  </head>
+  <body>
+    <main class="home">
+      <div>
+        <h1>Construa sua melhor versão</h1>
+        <p>Organize sua dieta em um só lugar</p>
+
+        <a href="register.html" class="btn-primary btn-small">Comece já</a>
+      </div>
+
+      <div class="login">
+        <p>Já cadastrou sua dieta?</p>
+
+        <input type="tel" id="phoneLookup" placeholder="(xx) xxxxx-xxxx" />
+
+        <div>
+          <a id="accessBtn" class="btn-primary btn-small">Acessar</a>
+          <p id="homeError" class="error hidden">Telefone não encontrado</p>
+        </div>
+      </div>
+    </main>
+
+    <script src="js/darkmode.js"></script>
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script type="module" src="js/home.js"></script>
+  </body>
+</html>

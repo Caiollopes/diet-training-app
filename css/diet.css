@@ -1,0 +1,211 @@
+/* ==================================================
+   DIET
+================================================== */
+.period-buttons {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 24px;
+}
+
+.period-buttons button {
+  background: var(--button-secondary);
+  color: var(--text-primary);
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-size: 14px;
+}
+
+.period-buttons button.active {
+  background: var(--button-primary);
+  color: white;
+}
+
+.period {
+  background: var(--bg-secondary);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 12px 25px var(--shadow);
+}
+
+.period-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  gap: 10px;
+}
+
+.period-header strong {
+  font-size: 16px;
+  flex: 1;
+}
+
+.period-controls {
+  display: flex;
+  gap: 6px;
+}
+
+.btn-move {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 14px;
+  min-width: 32px;
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.btn-move:hover {
+  background: var(--button-secondary-hover);
+  transform: scale(1.05);
+}
+
+.period-header input[type="time"] {
+  width: auto;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.meal-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.meal-form input {
+  flex: 1;
+}
+
+.meal-form button {
+  width: 44px;
+  border-radius: 10px;
+  background: #22c55e;
+  color: white;
+  font-size: 18px;
+  transition: all 0.3s;
+  font-weight: 600;
+}
+
+.meal-form button:hover {
+  background: #16a34a;
+}
+
+.meal-form button.btn-save-mode {
+  background: #2563eb;
+  width: auto;
+  padding: 10px 16px;
+}
+
+.meal-form button.btn-save-mode:hover {
+  background: #1e40af;
+}
+
+.meal-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.meal-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--bg-tertiary);
+  padding: 12px 14px;
+  border-radius: 10px;
+}
+
+.meal-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0;
+}
+
+.meal-text {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.meal-qty {
+  background: #2563eb;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  flex: 0;
+}
+
+.meal-buttons {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.btn-edit,
+.btn-delete,
+.btn-save,
+.btn-cancel {
+  background: transparent;
+  color: var(--text-primary);
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 4px 8px;
+  transition: all 0.3s;
+}
+
+.btn-edit:hover {
+  color: #2563eb;
+}
+
+.btn-delete:hover {
+  color: #dc2626;
+}
+
+.btn-save:hover {
+  color: #22c55e;
+}
+
+.btn-cancel:hover {
+  color: #f59e0b;
+}
+
+.edit-meal,
+.edit-qty {
+  padding: 4px 8px;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 14px;
+  margin-right: 6px;
+}
+
+#saveDiet {
+  width: 100%;
+  margin-top: 24px;
+}
+
+/* ==================================================
+   RESPONSIVO
+================================================== */
+@media (max-width: 768px) {
+  .meal-form {
+    flex-direction: column;
+  }
+
+  .meal-form button {
+    width: 100%;
+  }
+}

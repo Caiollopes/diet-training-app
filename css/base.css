@@ -1,0 +1,171 @@
+/* ==================================================
+   RESET + BASE
+================================================== */
+:root {
+  --bg-primary: #f3f4f6;
+  --bg-secondary: #ffffff;
+  --bg-tertiary: #e5e7eb;
+
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+
+  --border-color: #d1d5db;
+  --shadow: rgba(0, 0, 0, 0.05);
+
+  --button-primary: #2563eb;
+  --button-primary-hover: #1e40af;
+
+  --button-secondary: #e5e7eb;
+  --button-secondary-text: #111827;
+  --button-secondary-hover: #d1d5db;
+}
+
+body.dark-mode {
+  --bg-primary: #1f2937;
+  --bg-secondary: #2d3748;
+  --bg-tertiary: #4b5563;
+  --text-primary: #f3f4f6;
+  --text-secondary: #d1d5db;
+  --border-color: #4b5563;
+  --shadow: rgba(0, 0, 0, 0.3);
+  --button-secondary-text: #f3f4f6;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family:
+    "Inter",
+    system-ui,
+    -apple-system,
+    sans-serif;
+}
+
+body {
+  /* height: 100%; */
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+  transition:
+    background-color 0.3s,
+    color 0.3s;
+}
+
+/* ==================================================
+   CONTAINERS GERAIS
+================================================== */
+.container {
+  max-width: 1280px;
+  margin: 5% 10%;
+}
+
+/* ==================================================
+   TIPOGRAFIA
+================================================== */
+h1 {
+  font-size: 32px;
+}
+
+h2 {
+  font-size: 24px;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+p {
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+a {
+  text-decoration: none;
+}
+
+/* ==================================================
+   BOTÕES
+================================================== */
+button {
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-primary {
+  background: var(--button-primary);
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 15px;
+  display: block;
+  align-items: center;
+  text-align: center;
+  font-weight: 500;
+}
+
+.btn-primary:hover {
+  background: var(--button-primary-hover);
+}
+
+.btn-secondary {
+  background: var(--button-secondary);
+  color: var(--button-secondary-text);
+  padding: 12px 20px;
+  border-radius: 10px;
+}
+
+.btn-secondary:hover {
+  background: var(--button-secondary-hover);
+}
+
+.hidden {
+  display: none;
+}
+
+/* ==================================================
+   INPUTS
+================================================== */
+input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  font-size: 14px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+input:focus {
+  outline: none;
+  border-color: var(--button-primary);
+}
+
+/* ==================================================
+   DARK MODE TOGGLE
+================================================== */
+.theme-toggle {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: var(--button-primary);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  box-shadow: 0 4px 12px var(--shadow);
+  transition: all 0.3s;
+  z-index: 1000;
+}
+
+.theme-toggle:hover {
+  background: var(--button-primary-hover);
+  transform: scale(1.1);
+}
