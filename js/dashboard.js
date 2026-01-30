@@ -1,4 +1,4 @@
-import { getDiet, getUserByPhone } from "./supabase-config.js";
+import { getDiet, getUserByPhone, deleteDietPlan } from "./supabase-config.js";
 
 const phone = localStorage.getItem("currentUser");
 if (!phone) window.location.href = "index.html";
@@ -113,6 +113,46 @@ async function loadData() {
 
 document.getElementById("editDiet").onclick = () => {
   window.location.href = "diet.html";
+};
+
+document.getElementById("deletePlan").onclick = async () => {
+  const planName = localStorage.getItem("currentPlan");
+  
+  if (!planName) {
+    alert("Nenhum plano selecionado");
+    return;
+  }
+
+  if (!confirm(`Tem certeza que deseja deletar o plano "${planName}"?\n\nEsta ação não pode ser desfeita.`)) {
+    return;
+  }
+
+  try {
+    const btn = document.getElementById("deletePlan");
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Deletando...';
+
+    const { error } = await deleteDietPlan(phone, planName);
+
+    if (error) {
+      alert("Erro ao deletar plano");
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fas fa-trash"></i> Deletar';
+      return;
+    }
+
+    // Limpar localStorage
+    localStorage.removeItem("currentPlan");
+
+    // Voltar para user-home
+    window.location.href = "user-home.html";
+  } catch (error) {
+    console.error("Erro ao deletar plano:", error);
+    alert("Erro ao deletar plano");
+    const btn = document.getElementById("deletePlan");
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fas fa-trash"></i> Deletar';
+  }
 };
 
 // Recarregar dados ao voltar da página de edição

@@ -1,0 +1,626 @@
+/* ==================================================
+   PÁGINA DE TREINOS
+================================================== */
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 20px;
+  background: var(--bg-primary);
+  width: 100%;
+}
+
+.page-container {
+  max-width: 900px;
+  width: 100%;
+}
+
+.page-header {
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.back-link:hover {
+  color: var(--text-primary);
+  transform: translateX(-4px);
+}
+
+.header-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.header-actions button {
+  padding: 10px 16px;
+  font-size: 14px;
+}
+
+.header-actions .btn-primary,
+.header-actions .btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.page-content {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 12px;
+  padding: 40px;
+}
+
+.page-title-section {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.page-icon {
+  width: 80px;
+  height: 80px;
+  background: var(--button-primary);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}
+
+.page-icon i {
+  font-size: 32px;
+  color: white;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.page-subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+}
+
+/* ===== SELETOR DE PLANO ===== */
+.plan-selector {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  justify-content: center;
+  margin-top: 16px;
+}
+
+.plan-selector label {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.plan-select {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 2px solid var(--border-color);
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 200px;
+}
+
+.plan-select:hover {
+  border-color: var(--button-primary);
+}
+
+.plan-select:focus {
+  outline: none;
+  border-color: var(--button-primary);
+  background: var(--bg-primary);
+}
+
+/* ===== FORMULÁRIO ===== */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.form-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.form-group input,
+.form-group select {
+  padding: 12px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 14px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--button-primary);
+}
+
+/* ===== EXERCÍCIOS ===== */
+.exercises-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.exercise-card {
+  background: var(--bg-primary);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+  transition: all 0.2s ease;
+}
+
+.exercise-card:hover {
+  border-color: var(--button-primary);
+  background: var(--bg-tertiary);
+}
+
+.exercise-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.exercise-info {
+  flex: 1;
+}
+
+.exercise-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.exercise-reps {
+  font-size: 13px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.btn-remove {
+  background: var(--accent-red);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.btn-remove:hover {
+  background: var(--accent-red-hover);
+  transform: translateY(-1px);
+}
+
+.btn-edit {
+  background: var(--button-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+}
+
+.btn-edit:hover {
+  background: var(--button-primary-hover);
+  transform: translateY(-1px);
+}
+
+.exercise-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* ===== FORMULÁRIO DE EDIÇÃO DE EXERCÍCIO ===== */
+.exercise-edit-form {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+}
+
+.exercise-edit-form .form-group {
+  margin-bottom: 16px;
+}
+
+.exercise-edit-form .form-input {
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.exercise-edit-form .form-input:focus {
+  outline: none;
+  border-color: var(--button-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.btn-save {
+  background: var(--button-primary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.btn-save:hover {
+  background: var(--button-primary-hover);
+  transform: translateY(-1px);
+}
+
+.btn-cancel {
+  background: var(--text-secondary);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.btn-cancel:hover {
+  background: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+/* ===== ADICIONAR EXERCÍCIO ===== */
+.add-exercise-form {
+  background: var(--bg-primary);
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+/* ===== EMPTY STATE ===== */
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.empty-state-icon {
+  font-size: 64px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  opacity: 0.5;
+}
+
+.empty-state-text {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.empty-state-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+/* ===== AÇÕES ===== */
+.page-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.page-actions button {
+  flex: 1;
+  padding: 12px 16px;
+  font-size: 14px;
+}
+
+/* ===== BOTÕES ===== */
+.btn-primary,
+.btn-secondary {
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 2px solid transparent;
+}
+
+.btn-primary {
+  background: var(--button-primary);
+  color: white;
+}
+
+.btn-primary:hover {
+  background: var(--button-primary-hover);
+  transform: translateY(-2px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.btn-secondary {
+  background: var(--button-secondary);
+  color: var(--button-secondary-text);
+  border-color: var(--border-color);
+}
+
+.btn-secondary:hover {
+  background: var(--button-secondary-hover);
+  transform: translateY(-2px);
+}
+
+/* ===== MEDIA QUERIES ===== */
+@media (max-width: 900px) {
+  .page-content {
+    padding: 32px;
+  }
+
+  .form-group {
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .exercises-list {
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .exercise-card {
+    padding: 12px;
+  }
+
+  .page-actions {
+    flex-direction: column;
+  }
+
+  .page-actions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-wrapper {
+    padding: 16px;
+  }
+
+  .page-container {
+    width: 100%;
+  }
+
+  .page-content {
+    padding: 24px;
+    border-radius: 8px;
+  }
+
+  .page-title {
+    font-size: 22px;
+  }
+
+  .page-subtitle {
+    font-size: 13px;
+  }
+
+  .page-header {
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .back-link {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  .header-actions {
+    width: 100%;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .header-actions button {
+    width: 100%;
+  }
+
+  .page-icon {
+    width: 64px;
+    height: 64px;
+  }
+
+  .page-icon i {
+    font-size: 28px;
+  }
+
+  .plan-selector {
+    flex-direction: column;
+  }
+
+  .plan-select {
+    width: 100%;
+    min-width: 100%;
+  }
+
+  .form-group input,
+  .form-group select {
+    font-size: 16px;
+    padding: 10px;
+  }
+
+  .exercise-card {
+    padding: 12px;
+  }
+
+  .exercise-name {
+    font-size: 14px;
+  }
+
+  .exercise-reps {
+    font-size: 12px;
+  }
+
+  .btn-primary,
+  .btn-secondary,
+  .btn-remove {
+    font-size: 13px;
+    padding: 8px 12px;
+  }
+
+  .page-actions {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .page-actions button {
+    width: 100%;
+  }
+
+  .add-exercise-form {
+    padding: 16px;
+  }
+
+  .plan-selector {
+    flex-direction: column;
+  }
+
+  .plan-selector select {
+    width: 100%;
+  }
+
+  .empty-state {
+    padding: 40px 20px;
+  }
+
+  .empty-state-icon {
+    font-size: 48px;
+  }
+
+  .empty-state-text {
+    font-size: 16px;
+  }
+
+  .empty-state-subtitle {
+    font-size: 12px;
+  }
+}
+
+/* ==================================================
+   AÇÕES DO TREINO
+================================================== */
+
+.workout-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+  justify-content: center;
+}
+
+.workout-actions button {
+  padding: 12px 24px;
+  font-size: 15px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+@media (max-width: 768px) {
+  .workout-actions {
+    flex-direction: column;
+    margin-top: 20px;
+  }
+
+  .workout-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .exercise-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .exercise-actions button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .form-actions {
+    flex-direction: column;
+  }
+
+  .btn-save,
+  .btn-cancel {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .exercise-edit-form {
+    padding: 12px;
+  }
+}

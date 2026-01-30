@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Meus Treinos - Diet Training</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/workout.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script>
+      // Aplicar dark mode antes da página renderizar
+      const darkMode = localStorage.getItem("darkMode");
+      if (darkMode === "true") {
+        document.documentElement.style.colorScheme = "dark";
+        document.write(
+          "<style>body { background: #1f2937; color: #f3f4f6; }</style>",
+        );
+      }
+    </script>
+  </head>
+  <body>
+    <div class="page-wrapper">
+      <div class="page-container">
+        <!-- Header -->
+        <div class="page-header">
+          <a href="user-home.html" class="back-link">
+            <i class="fas fa-home"></i>
+            Início
+          </a>
+          <div class="header-actions">
+            <button id="newWorkoutBtn" class="btn-primary">
+              <i class="fas fa-plus"></i>
+              Novo Treino
+            </button>
+            <button id="downloadPDF" class="btn-secondary">
+              <i class="fas fa-file-pdf"></i>
+              Baixar PDF
+            </button>
+          </div>
+        </div>
+
+        <!-- Conteúdo -->
+        <div class="page-content">
+          <div class="page-title-section">
+            <div class="page-icon">
+              <i class="fas fa-dumbbell"></i>
+            </div>
+            <h1 id="username" class="page-title">Meus Treinos</h1>
+            <p class="page-subtitle">Acompanhe seus treinos</p>
+
+            <!-- Plan Selector -->
+            <div class="plan-selector" id="planSelector" style="display: none">
+              <label for="workoutPlanSelect">Selecione um treino:</label>
+              <select id="workoutPlanSelect" class="plan-select"></select>
+            </div>
+          </div>
+
+          <!-- Conteúdo do Treino -->
+          <div id="workoutView"></div>
+
+          <!-- Mensagem inicial -->
+          <div id="emptyState" class="empty-state">
+            <div class="empty-state-icon">
+              <i class="fas fa-dumbbell"></i>
+            </div>
+            <p class="empty-state-text">Nenhum treino cadastrado</p>
+            <p class="empty-state-subtitle">
+              Clique em "Novo Treino" para começar
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/darkmode.js"></script>
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script type="module" src="js/workout-dashboard.js"></script>
+  </body>
+</html>

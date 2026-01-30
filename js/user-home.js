@@ -1,4 +1,4 @@
-import { getUserByPhone, getDiet } from "./supabase-config.js";
+import { getUserByPhone, getDiet, getWorkout } from "./supabase-config.js";
 
 const phone = localStorage.getItem("currentUser");
 if (!phone) window.location.href = "index.html";
@@ -14,7 +14,7 @@ async function loadUserData() {
       `Bem-vindo, ${user.name}!`;
   }
 
-  // Verificar se tem planos
+  // Verificar se tem planos de dieta
   const { data: diet } = await getDiet(phone);
   const hasPlans = diet && diet.plans && diet.plans.length > 0;
 
@@ -30,6 +30,25 @@ async function loadUserData() {
     // Adicionar tooltip
     viewBtn.title = "Crie um plano primeiro";
   }
+
+  // Verificar se tem treinos
+  const { data: workout } = await getWorkout(phone);
+  const hasWorkouts = workout && workout.plans && workout.plans.length > 0;
+
+  // Obter botão de visualizar treinos
+  const viewWorkoutBtn = document.querySelector(
+    '.action-card[href="workout-dashboard.html"]',
+  );
+
+  if (!hasWorkouts) {
+    // Desabilitar botão de visualizar treinos
+    viewWorkoutBtn.style.opacity = "0.5";
+    viewWorkoutBtn.style.pointerEvents = "none";
+    viewWorkoutBtn.style.cursor = "not-allowed";
+
+    // Adicionar tooltip
+    viewWorkoutBtn.title = "Crie um treino primeiro";
+  }
 }
 
 // Logout
@@ -43,4 +62,10 @@ document.getElementById("createNewBtn").onclick = () => {
   localStorage.setItem("newPlan", "true");
   localStorage.removeItem("currentPlan");
   window.location.href = "diet.html";
+};
+
+// Criar novo treino
+document.getElementById("createNewWorkoutBtn").onclick = () => {
+  localStorage.setItem("newWorkout", "true");
+  window.location.href = "workout.html";
 };
