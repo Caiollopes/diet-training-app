@@ -1,14 +1,38 @@
+import { getDiet, getUserByPhone } from "./supabase-config.js";
+
 const phone = localStorage.getItem("currentUser");
 if (!phone) window.location.href = "index.html";
 
-let users = JSON.parse(localStorage.getItem("users")) || {};
-let data = users[phone];
+let userData = null;
+let dietData = null;
 
-if (!data || !data.diet) {
-  document.getElementById("dietView").innerHTML =
-    "<p>Nenhuma dieta cadastrada.</p>";
-} else {
-  renderDashboard(data);
+// Carregar dados do Supabase
+loadData();
+
+async function loadData() {
+  // Obter dados do usuário
+  const { data: user } = await getUserByPhone(phone);
+  userData = user;
+
+  if (userData) {
+    document.getElementById("username").textContent =
+      `Dieta de ${userData.name}`;
+  }
+
+  // Obter dieta
+  const { data: diet } = await getDiet(phone);
+  dietData = diet;
+
+  if (
+    !dietData ||
+    !dietData.diet_data ||
+    Object.keys(dietData.diet_data).length === 0
+  ) {
+    document.getElementById("dietView").innerHTML =
+      "<p>Nenhuma dieta cadastrada.</p>";
+  } else {
+    renderDashboard(dietData);
+  }
 }
 
 document.getElementById("editDiet").onclick = () => {
@@ -17,33 +41,23 @@ document.getElementById("editDiet").onclick = () => {
 
 // Recarregar dados ao voltar da página de edição
 window.addEventListener("pageshow", () => {
-  users = JSON.parse(localStorage.getItem("users")) || {};
-  data = users[phone];
-
-  if (!data || !data.diet) {
-    document.getElementById("dietView").innerHTML =
-      "<p>Nenhuma dieta cadastrada.</p>";
-  } else {
-    renderDashboard(data);
-  }
+  loadData();
 });
 
 document.getElementById("downloadPDF").onclick = () => {
   // PDF download será implementado aqui
 };
 
-function renderDashboard(data) {
-  document.getElementById("username").textContent =
-    `Dieta de ${data.user.name}`;
-
+function renderDashboard(dietData) {
   const container = document.getElementById("dietView");
   container.innerHTML = "";
 
-  let periodOrder = JSON.parse(localStorage.getItem(`dietOrder_${phone}`));
-  let periods = Object.entries(data.diet);
+  const diet = dietData.diet_data || {};
+  const periodOrder = dietData.period_order || [];
+  let periods = Object.entries(diet);
 
   // Ordena os períodos se houver uma ordem salva
-  if (periodOrder) {
+  if (periodOrder.length > 0) {
     periods.sort(
       (a, b) => periodOrder.indexOf(a[0]) - periodOrder.indexOf(b[0]),
     );
@@ -53,7 +67,7 @@ function renderDashboard(data) {
     const section = document.createElement("div");
     section.className = "period-view";
 
-    const mealsHTML = info.meals
+    const mealsHTML = (info.meals || [])
       .map(
         (m) =>
           `<div class="meal-item">
@@ -66,7 +80,7 @@ function renderDashboard(data) {
       .join("");
 
     section.innerHTML = `
-      <h3>${period} - ${info.time}</h3>
+      <h3>${period} - ${info.time || "00:00"}</h3>
       <div class="meal-list">
         ${mealsHTML}
       </div>
