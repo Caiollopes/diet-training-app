@@ -2,7 +2,8 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <title>Login - Dieta & Treino</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Diet Training</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -21,54 +22,86 @@
     </script>
   </head>
   <body>
-    <main class="page-wrapper">
-      <div class="page-container">
-        <!-- Header -->
-        <div class="page-header">
-          <a href="index.html" class="back-link">
-            <i class="fas fa-arrow-left"></i>
-            Voltar
-          </a>
-        </div>
+    <!-- Header -->
+    <header class="auth-header">
+      <div class="header-container">
+        <a href="index.html" class="back-btn">
+          <i class="fas fa-arrow-left"></i>
+          <span>Voltar</span>
+        </a>
 
-        <!-- Content -->
-        <div class="page-content">
-          <div class="page-title-section">
-            <div class="page-icon">
+        <button id="darkModeToggle" class="theme-toggle">
+          <i class="fas fa-moon"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="auth-main">
+      <div class="auth-container">
+        <div class="auth-card">
+          <!-- Icon and Title -->
+          <div class="auth-header-section">
+            <div class="auth-icon">
               <i class="fas fa-sign-in-alt"></i>
             </div>
-            <h1 class="page-title">Acesse sua dieta</h1>
-            <p class="page-subtitle">Digite seu telefone para continuar</p>
+            <h1 class="auth-title">Bem-vindo de volta!</h1>
+            <p class="auth-subtitle">Entre com seu telefone para continuar</p>
           </div>
 
-          <form class="form-group">
-            <div class="input-group">
-              <i class="fas fa-phone"></i>
-              <input
-                type="tel"
-                id="phoneLookup"
-                placeholder="(xx) xxxxx-xxxx"
-                autocomplete="tel"
-              />
+          <!-- Form -->
+          <form class="auth-form">
+            <div class="form-group">
+              <label for="phoneLookup" class="form-label">
+                <i class="fas fa-phone"></i>
+                Telefone
+              </label>
+              <div class="input-wrapper">
+                <input
+                  type="tel"
+                  id="phoneLookup"
+                  class="form-input"
+                  placeholder="(xx) xxxxx-xxxx"
+                  autocomplete="tel"
+                />
+              </div>
             </div>
 
-            <button type="button" id="accessBtn" class="btn-primary btn-block">
+            <button type="button" id="accessBtn" class="btn-submit">
+              <span>Acessar minha conta</span>
               <i class="fas fa-arrow-right"></i>
-              Acessar minha dieta
             </button>
 
-            <p id="homeError" class="error hidden">
+            <div id="homeError" class="error-message hidden">
               <i class="fas fa-exclamation-circle"></i>
-              Telefone não encontrado
-            </p>
+              <span>Telefone não encontrado. Verifique e tente novamente.</span>
+            </div>
           </form>
 
-          <div class="page-footer">
-            <p>Ainda não tem cadastro?</p>
-            <a href="register.html" class="link-primary">
-              Crie sua conta agora
+          <!-- Divider -->
+          <div class="auth-divider">
+            <span>ou</span>
+          </div>
+
+          <!-- Register Link -->
+          <div class="auth-footer">
+            <p class="footer-text">Ainda não tem uma conta?</p>
+            <a href="register.html" class="footer-link">
+              <span>Criar conta gratuita</span>
               <i class="fas fa-arrow-right"></i>
             </a>
+          </div>
+        </div>
+
+        <!-- Info Cards -->
+        <div class="info-cards">
+          <div class="info-card">
+            <i class="fas fa-shield-alt"></i>
+            <span>Seus dados estão seguros</span>
+          </div>
+          <div class="info-card">
+            <i class="fas fa-bolt"></i>
+            <span>Acesso rápido e fácil</span>
           </div>
         </div>
       </div>

@@ -142,20 +142,16 @@ async function loadData(retryCount = 0) {
 // ===== RENDERIZAÇÃO DO DASHBOARD =====
 function renderDashboard() {
   if (allWorkouts.length === 0) {
-    document.getElementById("planSelector").style.display = "none";
     document.getElementById("workoutView").innerHTML = "";
     document.getElementById("emptyState").style.display = "block";
     document.getElementById("downloadPDF").style.display = "none";
   } else {
     document.getElementById("emptyState").style.display = "none";
-    document.getElementById("planSelector").style.display = "flex";
     document.getElementById("downloadPDF").style.display = "inline-flex";
 
     // Renderizar seletor de planos
     const select = document.getElementById("workoutPlanSelect");
-    const defaultOption =
-      '<option value="" disabled selected>Selecione um treino...</option>';
-    select.innerHTML = defaultOption;
+    select.innerHTML = '<option value="">Selecione um treino</option>';
 
     allWorkouts.forEach((workout, index) => {
       const option = document.createElement("option");

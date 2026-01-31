@@ -1,430 +1,642 @@
-import { saveDiet, getDiet, deleteDietPlan } from "./supabase-config.js";
+import { supabaseConfig } from "./supabase-config.js";
 
-const phone = localStorage.getItem("currentUser");
-if (!phone) window.location.href = "index.html";
+const { createClient } = supabase;
+const supabaseClient = createClient(supabaseConfig.url, supabaseConfig.key);
 
-let dietState = {};
-const rendered = {};
-let periodOrder = null;
-let editingMeal = null;
-let editingPeriod = null;
-let currentPlanName = "";
-
-const buttons = document.querySelectorAll("[data-period]");
-const container = document.getElementById("periodsContainer");
-const saveBtn = document.getElementById("saveDiet");
-const deleteBtn = document.getElementById("deleteDiet");
-const dietNameInput = document.getElementById("dietNameInput");
-const nextBtn = document.getElementById("nextBtn");
+// Elements
 const dietNameSection = document.getElementById("dietNameSection");
-const dietPeriodsSection = document.getElementById("dietPeriodsSection");
-const dietNameDisplay = document.getElementById("dietNameDisplay");
-
-// Mostrar skeleton loader
-showSkeleton();
-
-// Carregar dieta do Supabase
-loadDiet();
-
-function showSkeleton() {
-  const container = document.getElementById("periodsContainer");
-  container.innerHTML = `
-    <div class="skeleton-buttons">
-      <div class="skeleton skeleton-button"></div>
-      <div class="skeleton skeleton-button"></div>
-      <div class="skeleton skeleton-button"></div>
-      <div class="skeleton skeleton-button"></div>
-    </div>
-  `;
-}
-
-async function loadDiet() {
-  // Limpa skeleton
-  document.getElementById("periodsContainer").innerHTML = "";
-
-  const isNewPlan = localStorage.getItem("newPlan") === "true";
-  const currentPlan = localStorage.getItem("currentPlan");
-
-  if (isNewPlan) {
-    // Criar novo plano vazio
-    dietState = {};
-    periodOrder = [];
-    currentPlanName = "";
-    localStorage.removeItem("newPlan");
-    dietNameSection.classList.remove("hidden");
-    dietPeriodsSection.classList.add("hidden");
-  } else {
-    // Carregar plano existente
-    const { data } = await getDiet(phone);
-
-    if (data && data.plans && data.plans.length > 0) {
-      // Se tem um plano atual definido, carrega ele, senão carrega o primeiro
-      const planName = currentPlan || data.plans[0].name;
-      const plan = data.plans.find((p) => p.name === planName) || data.plans[0];
-
-      localStorage.setItem("currentPlan", plan.name);
-      currentPlanName = plan.name;
-      dietState = plan.diet_data || {};
-      periodOrder = plan.period_order || [];
-      dietNameSection.classList.add("hidden");
-      dietPeriodsSection.classList.remove("hidden");
-      dietNameDisplay.textContent = `Editando: ${plan.name}`;
-
-      // Mostrar botão de deletar
-      deleteBtn.classList.remove("hidden");
-    } else {
-      dietState = {};
-      periodOrder = [];
-      currentPlanName = "";
-      dietNameSection.classList.remove("hidden");
-      dietPeriodsSection.classList.add("hidden");
-    }
-  }
-
-  init();
-}
-
-function init() {
-  const periods = Object.keys(dietState);
-
-  if (periodOrder.length === 0) {
-    periodOrder = periods;
-  } else {
-    periods.sort((a, b) => periodOrder.indexOf(a) - periodOrder.indexOf(b));
-  }
-
-  periods.forEach((period) => {
-    renderPeriod(period);
-    activateButton(period);
-  });
-  toggleSaveButton();
-}
-
-// Botão próximo do input de nome
-nextBtn.onclick = () => {
-  const name = dietNameInput.value.trim();
-  if (!name) {
-    alert("Digite um nome para seu plano!");
-    return;
-  }
-  currentPlanName = name;
-  dietNameSection.classList.add("hidden");
-  dietPeriodsSection.classList.remove("hidden");
-  dietNameDisplay.textContent = `Plano: ${name}`;
-};
-
-// Enter no input de nome
-dietNameInput.onkeypress = (e) => {
-  if (e.key === "Enter") {
-    nextBtn.click();
-  }
-};
-
-// Botão de editar nome da dieta
+const dietMealsSection = document.getElementById("dietMealsSection");
+const dietNameInput = document.getElementById("dietName");
+const nextBtn = document.getElementById("nextBtn");
+const savBtn = document.getElementById("savBtn");
+const deleteBtn = document.getElementById("deleteBtn");
+const dietTitleDisplay = document.getElementById("dietTitleDisplay");
 const editDietNameBtn = document.getElementById("editDietNameBtn");
-if (editDietNameBtn) {
-  editDietNameBtn.onclick = handleEditDietName;
+const mealsList = document.getElementById("mealsList");
+const mealNameInput = document.getElementById("mealName");
+const mealTimeInput = document.getElementById("mealTime");
+const foodItemInput = document.getElementById("foodItemInput");
+const addFoodItemBtn = document.getElementById("addFoodItemBtn");
+const foodItemsList = document.getElementById("foodItemsList");
+const addMealBtn = document.getElementById("addMealBtn");
+const step1Indicator = document.getElementById("step1Indicator");
+const step2Indicator = document.getElementById("step2Indicator");
+const periodButtons = document.querySelectorAll(".period-btn");
+const selectedPeriodDisplay = document.getElementById("selectedPeriodDisplay");
+const selectedPeriodName = document.getElementById("selectedPeriodName");
+const selectedPeriodTime = document.getElementById("selectedPeriodTime");
+const clearPeriodBtn = document.getElementById("clearPeriodBtn");
+const foodSection = document.getElementById("foodSection");
+const addMealCard = document.getElementById("addMealCard");
+const closePeriodFormBtn = document.getElementById("closePeriodFormBtn");
+const toast = document.getElementById("toast");
+
+let currentUser = null;
+let editingDietId = null;
+let meals = [];
+let currentFoodItems = []; // Array temporário de alimentos para o período atual
+let editingMealId = null; // ID do período sendo editado
+let editingFoodIndex = null; // Índice do alimento sendo editado
+let selectedPeriod = null; // Período selecionado
+
+// Toast notification function
+function showToast(message, type = "success") {
+  const icon =
+    type === "success"
+      ? "fa-check-circle"
+      : type === "error"
+        ? "fa-exclamation-circle"
+        : "fa-info-circle";
+
+  toast.innerHTML = `<i class="fas ${icon}"></i><span>${message}</span>`;
+  toast.className = `toast ${type} show`;
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 3000);
 }
 
-function handleEditDietName() {
-  const nameDisplay = document.getElementById("dietNameDisplay");
-  const editBtn = document.getElementById("editDietNameBtn");
-
-  // Extrair o nome atual (remover "Editando: " ou "Plano: " do texto)
-  const currentText = nameDisplay.textContent;
-  const currentName = currentText.replace(/^(Editando: |Plano: )/, "");
-
-  // Criar input para edição inline
-  const input = document.createElement("input");
-  input.type = "text";
-  input.value = currentName;
-  input.className = "diet-name-edit-input";
-  input.maxLength = 50;
-
-  // Substituir título pelo input
-  nameDisplay.style.display = "none";
-  editBtn.style.display = "none";
-  nameDisplay.parentNode.insertBefore(input, nameDisplay);
-  input.focus();
-  input.select();
-
-  // Função para salvar a edição
-  const saveEdit = () => {
-    const newName = input.value.trim();
-
-    if (newName && newName !== currentName) {
-      currentPlanName = newName;
-      dietNameInput.value = newName;
-      const prefix = currentText.startsWith("Editando: ")
-        ? "Editando: "
-        : "Plano: ";
-      nameDisplay.textContent = prefix + newName;
-      localStorage.setItem("currentPlan", newName);
-      console.log("✏️ Nome da dieta alterado para:", newName);
-    }
-
-    // Restaurar título
-    input.remove();
-    nameDisplay.style.display = "";
-    editBtn.style.display = "";
-  };
-
-  // Salvar com Enter
-  input.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") {
-      saveEdit();
-    }
-  });
-
-  // Salvar ao perder o foco
-  input.addEventListener("blur", saveEdit);
-
-  // Cancelar com Esc
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      input.remove();
-      nameDisplay.style.display = "";
-      editBtn.style.display = "";
-    }
-  });
-}
-
-buttons.forEach((btn) => {
-  btn.onclick = () => {
-    const period = btn.dataset.period;
+// Period Selection
+periodButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const periodName = btn.dataset.period;
+    const periodTime = btn.dataset.time;
     const isActive = btn.classList.contains("active");
 
     if (isActive) {
-      delete dietState[period];
-      // Remove do periodOrder
-      const index = periodOrder.indexOf(period);
-      if (index > -1) {
-        periodOrder.splice(index, 1);
-      }
-      if (rendered[period]) {
-        container.removeChild(rendered[period]);
-        delete rendered[period];
-        btn.classList.remove("active");
+      // Se já está ativo, alterna visibilidade do formulário
+      if (addMealCard.style.display === "none") {
+        // Mostrar formulário novamente
+        addMealCard.style.display = "block";
+        setTimeout(() => {
+          addMealCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }, 100);
+      } else {
+        // Esconder formulário mas manter botão ativo
+        addMealCard.style.display = "none";
       }
     } else {
-      if (!dietState[period]) {
-        dietState[period] = { time: "00:00", meals: [] };
-      }
-
-      // Adiciona ao periodOrder se não existir
-      if (!periodOrder.includes(period)) {
-        periodOrder.push(period);
-      }
-
-      if (!rendered[period]) {
-        renderPeriod(period);
-        activateButton(period);
-      }
+      // Abre o formulário com o período selecionado
+      selectPeriod(periodName, periodTime);
     }
-
-    toggleSaveButton();
-  };
+  });
 });
 
-function renderPeriod(period) {
-  if (rendered[period]) return;
+clearPeriodBtn.addEventListener("click", clearPeriodSelection);
+closePeriodFormBtn.addEventListener("click", closePeriodForm);
 
-  const section = document.createElement("div");
-  section.className = "period";
-  section.dataset.period = period;
+function selectPeriod(name, time) {
+  selectedPeriod = { name, time };
+  mealNameInput.value = name;
+  mealTimeInput.value = time;
 
-  section.innerHTML = `
-    <div class="period-header">
-      <strong>${period}</strong>
-      <div class="period-controls">
-        <button class="btn-move up" title="Mover para cima">↑</button>
-        <button class="btn-move down" title="Mover para baixo">↓</button>
-      </div>
-      <input type="time" value="${dietState[period].time}">
-    </div>
-
-    <div class="meal-form">
-      <input placeholder="Refeição">
-      <input placeholder="Quantidade">
-      <button>+</button>
-    </div>
-
-    <div class="meal-list"></div>
-  `;
-
-  const timeInput = section.querySelector("input[type='time']");
-  const mealInput = section.querySelector(".meal-form input:nth-child(1)");
-  const qtyInput = section.querySelector(".meal-form input:nth-child(2)");
-  const addBtn = section.querySelector(".meal-form button");
-  const list = section.querySelector(".meal-list");
-  const upBtn = section.querySelector(".btn-move.up");
-  const downBtn = section.querySelector(".btn-move.down");
-
-  timeInput.onchange = () => {
-    dietState[period].time = timeInput.value;
-  };
-
-  dietState[period].meals.forEach((meal) =>
-    renderMeal(list, period, meal, mealInput, qtyInput, addBtn),
+  // Update UI
+  periodButtons.forEach((btn) => btn.classList.remove("active"));
+  const activeBtn = Array.from(periodButtons).find(
+    (btn) => btn.dataset.period.trim() === name.trim(),
   );
+  if (activeBtn) {
+    activeBtn.classList.add("active");
+  } else {
+    // Se não encontrou botão correspondente, não importa - pode ser um período customizado
+    console.log("Período não tem botão correspondente:", name);
+  }
 
-  addBtn.onclick = () => {
-    if (!mealInput.value || !qtyInput.value) return;
+  selectedPeriodName.textContent = name;
+  selectedPeriodTime.textContent = time;
+  selectedPeriodDisplay.style.display = "flex";
+  foodSection.style.display = "block";
 
-    if (editingMeal && editingPeriod === period) {
-      editingMeal.meal = mealInput.value;
-      editingMeal.qty = qtyInput.value;
+  // Show form with animation
+  addMealCard.style.display = "block";
+  setTimeout(() => {
+    addMealCard.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }, 100);
 
-      const items = list.querySelectorAll(".meal-item");
-      items.forEach((item) => {
-        const text = item.querySelector(".meal-text").textContent;
-        if (text === editingMeal.meal || text.includes(editingMeal.meal)) {
-          item.querySelector(".meal-text").textContent = editingMeal.meal;
-          item.querySelector(".meal-qty").textContent = editingMeal.qty;
-        }
-      });
+  // Show add food button
+  document.getElementById("addFoodItemBtn").style.display = "inline-flex";
+}
 
-      editingMeal = null;
-      editingPeriod = null;
-      addBtn.textContent = "+";
-      addBtn.classList.remove("btn-save-mode");
-    } else {
-      const meal = { meal: mealInput.value, qty: qtyInput.value };
-      dietState[period].meals.push(meal);
-      renderMeal(list, period, meal, mealInput, qtyInput, addBtn);
+function closePeriodForm() {
+  addMealCard.style.display = "none";
+  currentFoodItems = [];
+  editingFoodIndex = null;
+  selectedPeriodDisplay.style.display = "none";
+  foodSection.style.display = "none";
+  renderFoodItems();
+
+  // Manter botão ativo - não limpar selectedPeriod nem remover classe active
+}
+
+function clearPeriodSelection() {
+  selectedPeriod = null;
+  mealNameInput.value = "";
+  mealTimeInput.value = "";
+  currentFoodItems = [];
+  editingFoodIndex = null;
+
+  periodButtons.forEach((btn) => btn.classList.remove("active"));
+  selectedPeriodDisplay.style.display = "none";
+  foodSection.style.display = "none";
+
+  renderFoodItems();
+}
+
+// Verificar se está editando
+const urlParams = new URLSearchParams(window.location.search);
+editingDietId = urlParams.get("id");
+
+// Initialize
+async function init() {
+  // Verificar se está logado (sistema antigo com telefone)
+  const phone = localStorage.getItem("currentUser");
+  if (!phone) {
+    window.location.href = "index.html";
+    return;
+  }
+
+  // Tentar obter usuário autenticado do Supabase
+  const {
+    data: { user },
+  } = await supabaseClient.auth.getUser();
+
+  // Se não tiver usuário do Supabase, usar telefone como identificador
+  if (user) {
+    currentUser = user;
+  } else {
+    // Criar objeto fake de usuário com o telefone
+    currentUser = { id: phone, phone: phone };
+  }
+
+  // Se está editando, carregar dados
+  if (editingDietId) {
+    await loadDietData(editingDietId);
+    deleteBtn.style.display = "inline-flex";
+  }
+}
+
+// Carregar dados da dieta para edição
+async function loadDietData(dietName) {
+  try {
+    const phone = currentUser.phone || currentUser.id;
+
+    const { data, error } = await supabaseClient
+      .from("diets")
+      .select("plans")
+      .eq("phone", phone)
+      .single();
+
+    if (error) throw error;
+
+    const plan = data.plans.find((p) => p.name === dietName);
+    if (!plan) throw new Error("Dieta não encontrada");
+
+    dietNameInput.value = plan.name;
+
+    // Converter diet_data de volta para array de meals
+    meals = plan.period_order.map((periodKey, index) => {
+      const period = plan.diet_data[periodKey];
+      // Verificar se foods é string (antigo) ou array (novo)
+      const foodsArray =
+        typeof period.foods === "string"
+          ? period.foods.split("\n").filter((f) => f.trim())
+          : period.foods;
+
+      return {
+        id: Date.now() + index,
+        name: period.name,
+        time: period.time || "",
+        foods: foodsArray,
+      };
+    });
+
+    // Avançar para seção de períodos
+    goToMealsSection();
+  } catch (error) {
+    console.error("Erro ao carregar dieta:", error);
+    showToast("Erro ao carregar dieta!", "error");
+  }
+}
+
+// Ir para seção de períodos
+function goToMealsSection() {
+  const dietName = dietNameInput.value.trim();
+
+  if (!dietName) {
+    showToast("Por favor, digite o nome da dieta", "warning");
+    dietNameInput.focus();
+    return;
+  }
+
+  dietNameSection.style.display = "none";
+  dietMealsSection.style.display = "block";
+  dietTitleDisplay.textContent = dietName;
+  step1Indicator.classList.remove("active");
+  step2Indicator.classList.add("active");
+  renderMeals();
+}
+
+// Voltar para seção de nome
+function goToNameSection() {
+  dietMealsSection.style.display = "none";
+  dietNameSection.style.display = "block";
+  step2Indicator.classList.remove("active");
+  step1Indicator.classList.add("active");
+}
+
+// Adicionar ou atualizar alimento à lista temporária
+function addFoodItem() {
+  const foodItem = foodItemInput.value.trim();
+
+  if (!foodItem) {
+    showToast("Por favor, digite um alimento", "warning");
+    return;
+  }
+
+  if (editingFoodIndex !== null) {
+    // Atualizar alimento existente
+    currentFoodItems[editingFoodIndex] = foodItem;
+    editingFoodIndex = null;
+    addFoodItemBtn.innerHTML = '<i class="fas fa-plus"></i>';
+  } else {
+    // Adicionar novo alimento
+    currentFoodItems.push(foodItem);
+  }
+
+  foodItemInput.value = "";
+  renderFoodItems();
+  foodItemInput.focus();
+}
+
+// Remover alimento da lista temporária
+function removeFoodItem(index) {
+  currentFoodItems.splice(index, 1);
+  renderFoodItems();
+}
+
+// Editar alimento da lista temporária
+function editFoodItem(index) {
+  editingFoodIndex = index;
+  foodItemInput.value = currentFoodItems[index];
+  addFoodItemBtn.innerHTML = '<i class="fas fa-save"></i>';
+  foodItemInput.focus();
+  foodItemInput.select();
+}
+
+// Renderizar lista de alimentos temporária
+function renderFoodItems() {
+  if (currentFoodItems.length === 0) {
+    foodItemsList.innerHTML = "";
+    return;
+  }
+
+  foodItemsList.innerHTML = currentFoodItems
+    .map(
+      (food, index) => `
+      <div class="food-item">
+        <span class="food-item-text">${food}</span>
+        <div class="food-item-actions">
+          <button class="btn-edit-food" onclick="window.editFoodItem(${index})" type="button" title="Editar alimento">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="btn-remove-food" onclick="window.removeFoodItem(${index})" type="button" title="Remover alimento">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+      </div>
+    `,
+    )
+    .join("");
+}
+
+// Adicionar ou atualizar período
+function addMeal() {
+  const name = mealNameInput.value.trim();
+  const time = mealTimeInput.value;
+
+  if (!name) {
+    return;
+  }
+
+  if (editingMealId !== null) {
+    // Atualizar período existente
+    const mealIndex = meals.findIndex((m) => m.id === editingMealId);
+    if (mealIndex !== -1) {
+      meals[mealIndex] = {
+        id: editingMealId,
+        name,
+        time,
+        foods: [...currentFoodItems],
+      };
+    }
+    editingMealId = null;
+    addMealBtn.innerHTML =
+      '<i class="fas fa-plus"></i><span>Adicionar Período</span>';
+  } else {
+    // Verificar se período já existe
+    const periodExists = meals.some((m) => m.name.trim() === name.trim());
+    if (periodExists) {
+      showToast("Este período já foi adicionado", "warning");
+      return;
     }
 
-    mealInput.value = "";
-    qtyInput.value = "";
-  };
+    // Adicionar novo período
+    meals.push({
+      id: Date.now(),
+      name,
+      time,
+      foods: [...currentFoodItems],
+    });
+  }
 
-  upBtn.onclick = () => {
-    movePeriod(period, -1);
-  };
+  // Fechar formulário e limpar
+  closePeriodForm();
 
-  downBtn.onclick = () => {
-    movePeriod(period, 1);
-  };
-
-  container.appendChild(section);
-  rendered[period] = section;
+  renderMeals();
 }
 
-function renderMeal(container, period, meal, mealInput, qtyInput, addBtn) {
-  const item = document.createElement("div");
-  item.className = "meal-item";
+// Remover período
+function removeMeal(id) {
+  if (confirm("Deseja remover este período?")) {
+    meals = meals.filter((m) => m.id !== id);
+    renderMeals();
+  }
+}
 
-  item.innerHTML = `
-    <div class="meal-content">
-      <span class="meal-text">${meal.meal}</span>
-      <span class="meal-qty">${meal.qty}</span>
+// Editar período
+function editMeal(id) {
+  const meal = meals.find((m) => m.id === id);
+  if (!meal) return;
+
+  // Preencher formulário com dados do período
+  selectPeriod(meal.name, meal.time || "");
+  currentFoodItems = [...meal.foods];
+  renderFoodItems();
+
+  // Atualizar estado de edição
+  editingMealId = id;
+  addMealBtn.innerHTML =
+    '<i class="fas fa-check"></i><span>Salvar Período</span>';
+
+  // Scroll suave até o formulário
+  document
+    .querySelector(".add-meal-card")
+    .scrollIntoView({ behavior: "smooth", block: "nearest" });
+}
+
+// Cancelar edição
+function cancelEditMeal() {
+  editingMealId = null;
+  clearPeriodSelection();
+  addMealBtn.innerHTML =
+    '<i class="fas fa-plus"></i><span>Adicionar Período</span>';
+}
+
+// Renderizar períodos
+function renderMeals() {
+  if (meals.length === 0) {
+    mealsList.innerHTML = "";
+    // Habilitar todos os botões quando não há períodos
+    periodButtons.forEach((btn) => {
+      btn.disabled = false;
+      btn.style.opacity = "1";
+    });
+    return;
+  }
+
+  // Desabilitar botões de períodos já adicionados
+  periodButtons.forEach((btn) => {
+    const periodName = btn.dataset.period.trim();
+    const isAdded = meals.some((m) => m.name.trim() === periodName);
+    btn.disabled = isAdded;
+    btn.style.opacity = isAdded ? "0.5" : "1";
+    btn.style.cursor = isAdded ? "not-allowed" : "pointer";
+  });
+
+  mealsList.innerHTML = meals
+    .map(
+      (meal) => `
+    <div class="meal-item">
+      <div class="meal-header">
+        <div class="meal-info">
+          <div class="meal-name">
+            <i class="fas fa-utensils"></i>
+            ${meal.name}
+          </div>
+          ${
+            meal.time
+              ? `
+            <div class="meal-time">
+              <i class="fas fa-clock"></i>
+              ${meal.time}
+            </div>
+          `
+              : ""
+          }
+        </div>
+        <div class="meal-actions">
+          <button class="btn-edit-period" onclick="window.editMeal(${meal.id})" title="Editar período">
+            <i class="fas fa-edit"></i>
+          </button>
+          <button class="btn-remove" onclick="window.removeMeal(${meal.id})" title="Remover período">
+            <i class="fas fa-trash"></i>
+          </button>
+        </div>
+      </div>
+      <div class="meal-foods">
+        <div class="meal-foods-label">
+          <i class="fas fa-apple-alt"></i>
+          Alimentos
+        </div>
+        <div class="meal-foods-text">
+          ${
+            Array.isArray(meal.foods)
+              ? meal.foods
+                  .map(
+                    (food) =>
+                      `<div style="margin-bottom: 4px;">• ${food}</div>`,
+                  )
+                  .join("")
+              : meal.foods
+          }
+        </div>
+      </div>
     </div>
-    <div class="meal-buttons">
-      <button class="btn-edit" title="Editar"><i class="fas fa-edit"></i></button>
-      <button class="btn-delete" title="Excluir"><i class="fas fa-trash"></i></button>
-    </div>
-  `;
-
-  const editBtn = item.querySelector(".btn-edit");
-  const deleteBtn = item.querySelector(".btn-delete");
-
-  editBtn.onclick = () => {
-    editingMeal = meal;
-    editingPeriod = period;
-    mealInput.value = meal.meal;
-    qtyInput.value = meal.qty;
-    addBtn.textContent = "Salvar";
-    addBtn.classList.add("btn-save-mode");
-    mealInput.focus();
-  };
-
-  deleteBtn.onclick = () => {
-    container.removeChild(item);
-    dietState[period].meals = dietState[period].meals.filter((m) => m !== meal);
-  };
-
-  container.appendChild(item);
-}
-
-function activateButton(period) {
-  const btn = [...buttons].find((b) => b.dataset.period === period);
-  if (btn) btn.classList.add("active");
-}
-
-function movePeriod(period, direction) {
-  const currentIndex = periodOrder.indexOf(period);
-  const newIndex = currentIndex + direction;
-
-  if (newIndex < 0 || newIndex >= periodOrder.length) return;
-
-  [periodOrder[currentIndex], periodOrder[newIndex]] = [
-    periodOrder[newIndex],
-    periodOrder[currentIndex],
-  ];
-
-  const sections = [...container.querySelectorAll(".period")];
-  sections.sort(
-    (a, b) =>
-      periodOrder.indexOf(a.dataset.period) -
-      periodOrder.indexOf(b.dataset.period),
-  );
-
-  container.innerHTML = "";
-  sections.forEach((section) => container.appendChild(section));
-}
-
-function toggleSaveButton() {
-  saveBtn.classList.toggle("hidden", Object.keys(dietState).length === 0);
-}
-
-saveBtn.onclick = async () => {
-  console.log("Salvando dieta:", dietState);
-  console.log("Ordem dos períodos:", periodOrder);
-
-  const planName = currentPlanName.trim();
-  if (!planName) {
-    alert("Nome do plano é obrigatório!");
-    return;
-  }
-
-  localStorage.setItem("currentPlan", planName);
-  const { error } = await saveDiet(phone, planName, dietState, periodOrder);
-
-  if (error) {
-    alert("Erro ao salvar dieta! Tente novamente.");
-    return;
-  }
-
-  // Aguardar um pouco para o Supabase replicar os dados
-  await new Promise((resolve) => setTimeout(resolve, 800));
-
-  window.location.href = "dashboard.html";
-};
-
-deleteBtn.onclick = async () => {
-  const planName = currentPlanName.trim();
-  if (!planName) {
-    alert("Nenhuma dieta selecionada para deletar!");
-    return;
-  }
-
-  if (
-    !confirm(
-      `Tem certeza que deseja deletar a dieta "${planName}"?\n\nEsta ação não pode ser desfeita.`,
+  `,
     )
-  ) {
+    .join("");
+}
+
+// Salvar dieta
+async function saveDiet() {
+  const dietName = dietNameInput.value.trim();
+
+  if (!dietName) {
+    showToast("Por favor, digite o nome da dieta", "warning");
+    goToNameSection();
+    dietNameInput.focus();
     return;
   }
 
-  const { error } = await deleteDietPlan(phone, planName);
-
-  if (error) {
-    alert("Erro ao deletar dieta! Tente novamente.");
-    console.error("Erro ao deletar:", error);
+  if (meals.length === 0) {
+    showToast("Por favor, adicione pelo menos um período", "warning");
     return;
   }
 
-  alert("Dieta deletada com sucesso!");
-  localStorage.removeItem("currentPlan");
-  window.location.href = "dashboard.html";
-};
+  try {
+    savBtn.disabled = true;
+    savBtn.innerHTML =
+      '<i class="fas fa-spinner fa-spin"></i> <span>Salvando...</span>';
+
+    const phone = currentUser.phone || currentUser.id;
+
+    // Buscar planos existentes
+    const { data: existingData } = await supabaseClient
+      .from("diets")
+      .select("plans")
+      .eq("phone", phone)
+      .single();
+
+    let plans = existingData?.plans || [];
+
+    // Preparar dados da dieta no formato do sistema
+    const dietData = {};
+    meals.forEach((meal, index) => {
+      const periodKey = `period${index + 1}`;
+      dietData[periodKey] = {
+        name: meal.name,
+        time: meal.time || "",
+        foods: Array.isArray(meal.foods) ? meal.foods : [meal.foods], // Sempre salvar como array
+      };
+    });
+
+    const periodOrder = meals.map((_, index) => `period${index + 1}`);
+
+    const planData = {
+      name: dietName,
+      diet_data: dietData,
+      period_order: periodOrder,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (editingDietId) {
+      // Atualizar dieta existente
+      const planIndex = plans.findIndex((p) => p.name === editingDietId);
+      if (planIndex >= 0) {
+        plans[planIndex] = planData;
+      }
+    } else {
+      // Adicionar nova dieta
+      plans.push(planData);
+    }
+
+    // Salvar no banco
+    const { error } = await supabaseClient.from("diets").upsert(
+      {
+        phone,
+        plans: plans,
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "phone" },
+    );
+
+    if (error) throw error;
+
+    showToast(
+      editingDietId
+        ? "Dieta atualizada com sucesso!"
+        : "Dieta criada com sucesso!",
+      "success",
+    );
+
+    setTimeout(() => {
+      window.location.href = "diet-dashboard.html";
+    }, 1500);
+  } catch (error) {
+    console.error("Erro ao salvar dieta:", error);
+    showToast("Erro ao salvar dieta: " + error.message, "error");
+    savBtn.disabled = false;
+    savBtn.innerHTML = '<i class="fas fa-save"></i> <span>Salvar Dieta</span>';
+  }
+}
+
+// Deletar dieta
+async function deleteDietHandler() {
+  if (!confirm("Tem certeza que deseja deletar esta dieta?")) {
+    return;
+  }
+
+  try {
+    deleteBtn.disabled = true;
+    deleteBtn.innerHTML =
+      '<i class="fas fa-spinner fa-spin"></i> <span>Deletando...</span>';
+
+    const phone = currentUser.phone || currentUser.id;
+
+    // Buscar planos existentes
+    const { data: existingData } = await supabaseClient
+      .from("diets")
+      .select("plans")
+      .eq("phone", phone)
+      .single();
+
+    if (existingData) {
+      // Remover a dieta do array de plans
+      const plans = existingData.plans.filter((p) => p.name !== editingDietId);
+
+      // Atualizar no banco
+      const { error } = await supabaseClient
+        .from("diets")
+        .update({
+          plans: plans,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("phone", phone);
+
+      if (error) throw error;
+    }
+
+    showToast("Dieta deletada com sucesso!", "success");
+
+    setTimeout(() => {
+      window.location.href = "diet-dashboard.html";
+    }, 1500);
+  } catch (error) {
+    console.error("Erro ao deletar dieta:", error);
+    showToast("Erro ao deletar dieta: " + error.message, "error");
+    deleteBtn.disabled = false;
+    deleteBtn.innerHTML = '<i class="fas fa-trash"></i> <span>Deletar</span>';
+  }
+}
+
+// Event Listeners
+nextBtn.addEventListener("click", goToMealsSection);
+editDietNameBtn.addEventListener("click", goToNameSection);
+addFoodItemBtn.addEventListener("click", addFoodItem);
+addMealBtn.addEventListener("click", addMeal);
+savBtn.addEventListener("click", saveDiet);
+deleteBtn.addEventListener("click", deleteDietHandler);
+
+// Atalho Enter no input de nome
+dietNameInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    goToMealsSection();
+  }
+});
+
+// Atalho Enter no input de alimento
+foodItemInput.addEventListener("keypress", (e) => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    addFoodItem();
+  }
+});
+
+// Expor funções para remover
+window.removeMeal = removeMeal;
+window.editMeal = editMeal;
+window.removeFoodItem = removeFoodItem;
+window.editFoodItem = editFoodItem;
+
+// Inicializar
+init();

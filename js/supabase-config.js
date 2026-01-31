@@ -282,3 +282,179 @@ export async function deleteWorkoutPlan(phone, planName) {
 
   return { data, error };
 }
+
+// ===== FUNÇÕES DE DIETAS (NOVO SISTEMA COM AUTH) =====
+
+export async function createDiet(userId, dietName, meals) {
+  try {
+    // Criar a dieta
+    const { data: diet, error: dietError } = await supabase
+      .from("diets")
+      .insert({
+        user_id: userId,
+        name: dietName,
+      })
+      .select()
+      .single();
+
+    if (dietError) throw dietError;
+
+    // Inserir as refeições
+    if (meals && meals.length > 0) {
+      const mealsToInsert = meals.map((meal) => ({
+        diet_id: diet.id,
+        name: meal.name,
+        time: meal.time || null,
+        foods: meal.foods,
+      }));
+
+      const { error: mealsError } = await supabase
+        .from("diet_meals")
+        .insert(mealsToInsert);
+
+      if (mealsError) throw mealsError;
+    }
+
+    console.log("✅ Dieta criada com sucesso:", diet);
+    return { data: diet, error: null };
+  } catch (error) {
+    console.error("❌ Erro ao criar dieta:", error);
+    return { data: null, error };
+  }
+}
+
+export async function updateDiet(dietId, dietName, meals) {
+  try {
+    // Atualizar o nome da dieta
+    const { error: updateError } = await supabase
+      .from("diets")
+      .update({
+        name: dietName,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", dietId);
+
+    if (updateError) throw updateError;
+
+    // Deletar refeições antigas
+    const { error: deleteError } = await supabase
+      .from("diet_meals")
+      .delete()
+      .eq("diet_id", dietId);
+
+    if (deleteError) throw deleteError;
+
+    // Inserir novas refeições
+    if (meals && meals.length > 0) {
+      const mealsToInsert = meals.map((meal) => ({
+        diet_id: dietId,
+        name: meal.name,
+        time: meal.time || null,
+        foods: meal.foods,
+      }));
+
+      const { error: insertError } = await supabase
+        .from("diet_meals")
+        .insert(mealsToInsert);
+
+      if (insertError) throw insertError;
+    }
+
+    console.log("✅ Dieta atualizada com sucesso!");
+    return { data: true, error: null };
+  } catch (error) {
+    console.error("❌ Erro ao atualizar dieta:", error);
+    return { data: null, error };
+  }
+}
+
+export async function deleteDiet(dietId) {
+  try {
+    // Deletar refeições primeiro (cascade deve fazer isso automaticamente, mas garantimos)
+    const { error: mealsError } = await supabase
+      .from("diet_meals")
+      .delete()
+      .eq("diet_id", dietId);
+
+    if (mealsError) throw mealsError;
+
+    // Deletar a dieta
+    const { error: dietError } = await supabase
+      .from("diets")
+      .delete()
+      .eq("id", dietId);
+
+    if (dietError) throw dietError;
+
+    console.log("✅ Dieta deletada com sucesso!");
+    return { data: true, error: null };
+  } catch (error) {
+    console.error("❌ Erro ao deletar dieta:", error);
+    return { data: null, error };
+  }
+}
+
+export async function getDietsByUserId(userId) {
+  try {
+    const { data, error } = await supabase
+      .from("diets")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+
+    if (error) throw error;
+
+    return { data, error: null };
+  } catch (error) {
+    console.error("❌ Erro ao buscar dietas:", error);
+    return { data: null, error };
+  }
+}
+
+export async function getDietById(dietId) {
+  try {
+    const { data: diet, error: dietError } = await supabase
+      .from("diets")
+      .select("*")
+      .eq("id", dietId)
+      .single();
+
+    if (dietError) throw dietError;
+
+    const { data: meals, error: mealsError } = await supabase
+      .from("diet_meals")
+      .select("*")
+      .eq("diet_id", dietId)
+      .order("created_at", { ascending: true });
+
+    if (mealsError) throw mealsError;
+
+    return { data: { diet, meals }, error: null };
+  } catch (error) {
+    console.error("❌ Erro ao buscar dieta:", error);
+    return { data: null, error };
+  }
+}
+
+export async function getMealsByDietId(dietId) {
+  try {
+    const { data, error } = await supabase
+      .from("diet_meals")
+      .select("*")
+      .eq("diet_id", dietId)
+      .order("created_at", { ascending: true });
+
+    if (error) throw error;
+
+    return { data, error: null };
+  } catch (error) {
+    console.error("❌ Erro ao buscar refeições:", error);
+    return { data: null, error };
+  }
+}
+
+// Exportar também a configuração para uso direto
+export const supabaseConfig = {
+  url: SUPABASE_URL,
+  key: SUPABASE_ANON_KEY,
+};

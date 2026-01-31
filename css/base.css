@@ -63,7 +63,6 @@ body.dark-mode {
 }
 
 body {
-  /* height: 100%; */
   background: var(--bg-primary);
   color: var(--text-primary);
   overflow-x: hidden;

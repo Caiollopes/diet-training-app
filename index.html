@@ -2,7 +2,8 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <title>Dieta & Treino</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Diet Training - Seu Treino, Seu Ritmo</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -21,29 +22,138 @@
     </script>
   </head>
   <body>
-    <main class="home">
-      <div class="home-content">
+    <!-- Header -->
+    <header class="landing-header">
+      <div class="header-container">
+        <div class="brand">
+          <div class="brand-icon">
+            <i class="fas fa-dumbbell"></i>
+          </div>
+          <span class="brand-name">Diet Training</span>
+        </div>
+
+        <button id="darkModeToggle" class="theme-toggle">
+          <i class="fas fa-moon"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="landing-main">
+      <div class="landing-container">
         <!-- Hero Section -->
-        <div class="hero-section">
-          <h1 class="hero-title">Construa sua melhor versão</h1>
-          <p class="hero-subtitle">
-            Organize sua dieta de forma simples e eficiente
+        <section class="hero-section">
+          <div class="hero-badge">
+            <i class="fas fa-trophy"></i>
+            <span>Alcance seus objetivos</span>
+          </div>
+
+          <h1 class="hero-title">
+            Transforme seu corpo,<br />
+            <span class="gradient-text">transforme sua vida</span>
+          </h1>
+
+          <p class="hero-description">
+            Gerencie seus treinos de forma inteligente e eficiente. Tudo que
+            você precisa para conquistar seus objetivos fitness.
           </p>
 
-          <div class="hero-actions">
-            <a href="register.html" class="btn-primary btn-large">
+          <!-- CTA Buttons -->
+          <div class="hero-cta">
+            <a href="register.html" class="btn-cta btn-primary">
               <i class="fas fa-rocket"></i>
-              Comece agora
+              <span>Começar agora</span>
+              <i class="fas fa-arrow-right"></i>
             </a>
 
-            <a href="login.html" class="btn-secondary btn-large">
+            <a href="login.html" class="btn-cta btn-outline">
               <i class="fas fa-sign-in-alt"></i>
-              Já tenho conta
+              <span>Já tenho conta</span>
             </a>
           </div>
-        </div>
+        </section>
+
+        <!-- Features Section -->
+        <section class="features-section">
+          <h2 class="features-title">Por que escolher o Diet Training?</h2>
+
+          <div class="features-grid">
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fas fa-dumbbell"></i>
+              </div>
+              <h3 class="feature-title">Treinos Personalizados</h3>
+              <p class="feature-description">
+                Crie e gerencie seus treinos com exercícios personalizados
+              </p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fas fa-calendar-check"></i>
+              </div>
+              <h3 class="feature-title">Calendário de Treinos</h3>
+              <p class="feature-description">
+                Marque seus dias de treino e acompanhe sua evolução
+              </p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <h3 class="feature-title">Acompanhe seu Progresso</h3>
+              <p class="feature-description">
+                Visualize estatísticas e mantenha sua motivação em alta
+              </p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fas fa-mobile-alt"></i>
+              </div>
+              <h3 class="feature-title">100% Responsivo</h3>
+              <p class="feature-description">
+                Acesse de qualquer dispositivo, onde e quando quiser
+              </p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fas fa-file-pdf"></i>
+              </div>
+              <h3 class="feature-title">Exporte em PDF</h3>
+              <p class="feature-description">
+                Gere PDFs dos seus treinos para levar na academia
+              </p>
+            </div>
+
+            <div class="feature-card">
+              <div class="feature-icon">
+                <i class="fas fa-moon"></i>
+              </div>
+              <h3 class="feature-title">Modo Escuro</h3>
+              <p class="feature-description">
+                Interface moderna com suporte a tema escuro
+              </p>
+            </div>
+          </div>
+        </section>
       </div>
     </main>
+
+    <!-- Footer -->
+    <footer class="landing-footer">
+      <div class="footer-container">
+        <p class="footer-text">
+          <i class="fas fa-heart"></i>
+          Feito para você alcançar seus objetivos
+        </p>
+        <p class="footer-copyright">
+          © 2026 Diet Training. Todos os direitos reservados.
+        </p>
+      </div>
+    </footer>
 
     <script src="js/darkmode.js"></script>
   </body>

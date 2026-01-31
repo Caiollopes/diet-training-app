@@ -2,14 +2,14 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <title>Dieta</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Nova Dieta - Diet Training</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
     />
-    <link rel="stylesheet" href="./css/base.css" />
-    <link rel="stylesheet" href="./css/skeleton.css" />
-    <link rel="stylesheet" href="./css/diet.css" />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/diet.css" />
     <script>
       // Aplicar dark mode antes da página renderizar
       const darkMode = localStorage.getItem("darkMode");
@@ -22,96 +22,269 @@
     </script>
   </head>
   <body>
-    <main class="page-wrapper">
-      <div class="page-container">
-        <!-- Header -->
-        <div class="page-header">
-          <div class="header-left-actions">
-            <button onclick="history.back()" class="back-btn">
-              <i class="fas fa-arrow-left"></i>
-            </button>
-            <a href="user-home.html" class="home-btn">
-              <i class="fas fa-home"></i>
-            </a>
-          </div>
-          <div class="header-actions">
-            <button id="saveDiet" class="btn-primary hidden">
-              <i class="fas fa-save"></i>
-              Salvar Dieta
-            </button>
-            <button id="deleteDiet" class="btn-danger hidden">
-              <i class="fas fa-trash"></i>
-              Deletar Dieta
-            </button>
+    <!-- Header -->
+    <header class="diet-header">
+      <div class="header-container">
+        <div class="header-left">
+          <button onclick="history.back()" class="icon-nav-btn">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <a href="user-home.html" class="icon-nav-btn">
+            <i class="fas fa-home"></i>
+          </a>
+          <div class="header-title">
+            <h1>Criar Dieta</h1>
           </div>
         </div>
 
-        <!-- Content -->
-        <div class="page-content">
-          <!-- Diet Name Input -->
-          <div id="dietNameSection" class="diet-name-section">
-            <div class="page-title-section">
-              <div class="page-icon">
+        <div class="header-right">
+          <button id="darkModeToggle" class="icon-nav-btn">
+            <i class="fas fa-moon"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <!-- Main Content -->
+    <main class="diet-main">
+      <div class="diet-container">
+        <!-- Step Indicator -->
+        <div class="step-indicator">
+          <div class="step active" id="step1Indicator">
+            <div class="step-number">1</div>
+            <div class="step-label">Nome da Dieta</div>
+          </div>
+          <div class="step-line"></div>
+          <div class="step" id="step2Indicator">
+            <div class="step-number">2</div>
+            <div class="step-label">Períodos</div>
+          </div>
+        </div>
+
+        <!-- Section 1: Diet Name -->
+        <div id="dietNameSection" class="diet-section">
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-icon">
                 <i class="fas fa-utensils"></i>
               </div>
-              <h1 class="page-title">Monte sua dieta</h1>
-              <p class="page-subtitle">
-                Comece digitando um nome para seu plano
-              </p>
+              <div class="section-text">
+                <h2 class="section-title">Nova Dieta</h2>
+                <p class="section-description">
+                  Escolha um nome para identificar seu plano alimentar
+                </p>
+              </div>
             </div>
 
-            <div class="name-input-group">
-              <input
-                type="text"
-                id="dietNameInput"
-                class="diet-name-input"
-                placeholder="Ex: Plano de Emagrecimento"
-                maxlength="50"
-              />
-              <button id="nextBtn" class="btn-primary">
+            <div class="section-body">
+              <div class="input-group-modern">
+                <label for="dietName" class="input-label">
+                  <i class="fas fa-tag"></i>
+                  Nome da Dieta
+                </label>
+                <input
+                  type="text"
+                  id="dietName"
+                  class="input-modern"
+                  placeholder="Ex: Dieta de Bulking, Cutting, Manutenção..."
+                  maxlength="50"
+                />
+              </div>
+
+              <button id="nextBtn" class="btn-next">
+                <span>Continuar</span>
                 <i class="fas fa-arrow-right"></i>
-                Próximo
               </button>
             </div>
           </div>
+        </div>
 
-          <!-- Diet Periods Section -->
-          <div id="dietPeriodsSection" class="diet-periods-section hidden">
-            <div class="page-title-section">
-              <div class="page-icon">
-                <i class="fas fa-utensils"></i>
+        <!-- Section 2: Meals -->
+        <div id="dietMealsSection" class="diet-section" style="display: none">
+          <div class="section-card">
+            <div class="section-header">
+              <div class="section-icon">
+                <i class="fas fa-list-check"></i>
               </div>
-              <h1 class="page-title">Monte sua dieta</h1>
-              <div
-                style="
-                  display: flex;
-                  align-items: center;
-                  justify-content: center;
-                  gap: 8px;
-                "
-              >
-                <p class="page-subtitle" id="dietNameDisplay"></p>
+              <div class="section-text">
+                <div class="title-edit-group">
+                  <h2 class="section-title" id="dietTitleDisplay"></h2>
+                  <button
+                    id="editDietNameBtn"
+                    class="btn-edit-title"
+                    title="Editar nome da dieta"
+                  >
+                    <i class="fas fa-edit"></i>
+                  </button>
+                </div>
+                <p class="section-description">
+                  Adicione os períodos alimentares e os alimentos de cada um
+                </p>
+              </div>
+            </div>
+
+            <div class="section-body">
+              <!-- Quick Period Buttons -->
+              <div class="period-selector-container">
+                <h3 class="period-selector-title">
+                  <i class="fas fa-clock"></i>
+                  Selecione um Período
+                </h3>
+                <div class="period-buttons">
+                  <button
+                    type="button"
+                    class="period-btn"
+                    data-period="Café da Manhã"
+                    data-time="07:00"
+                  >
+                    <i class="fas fa-coffee"></i>
+                    <span>Café da Manhã</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="period-btn"
+                    data-period="Lanche da Manhã"
+                    data-time="10:00"
+                  >
+                    <i class="fas fa-cookie"></i>
+                    <span>Lanche da Manhã</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="period-btn"
+                    data-period="Almoço"
+                    data-time="12:00"
+                  >
+                    <i class="fas fa-utensils"></i>
+                    <span>Almoço</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="period-btn"
+                    data-period="Lanche da Tarde"
+                    data-time="15:00"
+                  >
+                    <i class="fas fa-apple-alt"></i>
+                    <span>Lanche da Tarde</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="period-btn"
+                    data-period="Jantar"
+                    data-time="19:00"
+                  >
+                    <i class="fas fa-bowl-food"></i>
+                    <span>Jantar</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="period-btn"
+                    data-period="Ceia"
+                    data-time="22:00"
+                  >
+                    <i class="fas fa-moon"></i>
+                    <span>Ceia</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Periods List -->
+              <div class="meals-container">
+                <div class="meals-list" id="mealsList"></div>
+              </div>
+
+              <!-- Add Period Form -->
+              <div class="add-meal-card" id="addMealCard" style="display: none">
+                <div class="add-meal-header">
+                  <i class="fas fa-utensils"></i>
+                  <h3>Detalhes do Período</h3>
+                  <button
+                    type="button"
+                    id="closePeriodFormBtn"
+                    class="btn-close-form"
+                  >
+                    <i class="fas fa-times"></i>
+                  </button>
+                </div>
+
+                <div class="add-meal-body">
+                  <!-- Hidden inputs for selected period -->
+                  <input type="hidden" id="mealName" />
+                  <input type="hidden" id="mealTime" />
+
+                  <!-- Selected Period Display -->
+                  <div
+                    id="selectedPeriodDisplay"
+                    class="selected-period"
+                    style="display: none"
+                  >
+                    <div class="selected-period-info">
+                      <i class="fas fa-check-circle"></i>
+                      <span id="selectedPeriodName"></span>
+                      <span id="selectedPeriodTime"></span>
+                    </div>
+                    <button
+                      type="button"
+                      id="clearPeriodBtn"
+                      class="btn-clear-period"
+                    >
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+
+                  <!-- Food Items List -->
+                  <div
+                    class="input-group-modern"
+                    id="foodSection"
+                    style="display: none"
+                  >
+                    <label class="input-label">
+                      <i class="fas fa-apple-alt"></i>
+                      Alimentos
+                    </label>
+                    <div id="foodItemsList" class="food-items-list"></div>
+                  </div>
+
+                  <!-- Add Food Item -->
+                  <div class="add-food-group">
+                    <input
+                      type="text"
+                      id="foodItemInput"
+                      class="input-modern"
+                      placeholder="Ex: 100g de frango grelhado"
+                      maxlength="200"
+                    />
+                    <button id="addFoodItemBtn" class="btn-add-food-item">
+                      <i class="fas fa-plus"></i>
+                    </button>
+                  </div>
+
+                  <button id="addMealBtn" class="btn-add-meal">
+                    <i class="fas fa-plus"></i>
+                    <span>Adicionar Período</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="diet-actions-fixed">
+                <button id="savBtn" class="action-btn btn-save">
+                  <i class="fas fa-save"></i>
+                  <span>Salvar Dieta</span>
+                </button>
                 <button
-                  id="editDietNameBtn"
-                  class="btn-icon"
-                  title="Editar nome da dieta"
+                  id="deleteBtn"
+                  class="action-btn btn-delete"
+                  style="display: none"
                 >
-                  <i class="fas fa-edit"></i>
+                  <i class="fas fa-trash"></i>
+                  <span>Deletar Dieta</span>
                 </button>
               </div>
             </div>
-
-            <div class="period-buttons">
-              <button data-period="Café da manhã">Café da manhã</button>
-              <button data-period="Lanche da manhã">Lanche da manhã</button>
-              <button data-period="Almoço">Almoço</button>
-              <button data-period="Lanche da Tarde">Lanche da Tarde</button>
-              <button data-period="Jantar">Jantar</button>
-              <button data-period="Ceia">Ceia</button>
-              <button data-period="Pré-treino">Pré-treino</button>
-            </div>
-
-            <div id="periodsContainer"></div>
           </div>
         </div>
       </div>

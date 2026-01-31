@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Minhas Dietas - Diet Training</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/diet.css" />
+    <script>
+      // Aplicar dark mode antes da página renderizar
+      const darkMode = localStorage.getItem("darkMode");
+      if (darkMode === "true") {
+        document.documentElement.style.colorScheme = "dark";
+        document.write(
+          "<style>body { background: #1f2937; color: #f3f4f6; }</style>",
+        );
+      }
+    </script>
+  </head>
+  <body>
+    <!-- Header -->
+    <header class="dashboard-header">
+      <div class="header-container">
+        <div class="header-left">
+          <button onclick="history.back()" class="icon-nav-btn">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <a href="user-home.html" class="icon-nav-btn">
+            <i class="fas fa-home"></i>
+          </a>
+          <div class="header-title">
+            <h1>Minhas Dietas</h1>
+          </div>
+        </div>
+
+        <div class="header-right">
+          <button id="darkModeToggle" class="icon-nav-btn">
+            <i class="fas fa-moon"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <div class="dashboard-container">
+        <!-- Action Bar -->
+        <div class="action-bar">
+          <button id="newDietBtn" class="action-btn btn-new">
+            <i class="fas fa-plus"></i>
+            <span>Nova Dieta</span>
+          </button>
+          <button
+            id="editDietBtn"
+            class="action-btn btn-edit"
+            style="display: none"
+          >
+            <i class="fas fa-edit"></i>
+            <span>Editar</span>
+          </button>
+        </div>
+
+        <!-- Diet Selector -->
+        <div class="plan-selector-section">
+          <div class="selector-header">
+            <div class="selector-icon">
+              <i class="fas fa-utensils"></i>
+            </div>
+            <div class="selector-text">
+              <h2 class="selector-title">Plano Alimentar Selecionado</h2>
+              <p class="selector-description">
+                Escolha uma dieta para visualizar os detalhes
+              </p>
+            </div>
+          </div>
+
+          <div class="selector-body">
+            <div class="select-wrapper">
+              <i class="fas fa-apple-alt select-icon"></i>
+              <select id="dietSelect" class="diet-select">
+                <option value="">Selecione uma dieta</option>
+              </select>
+              <i class="fas fa-chevron-down select-arrow"></i>
+            </div>
+          </div>
+        </div>
+
+        <!-- Diet Details Card -->
+        <div
+          id="dietDetailsCard"
+          class="diet-details-card"
+          style="display: none"
+        >
+          <div class="details-header">
+            <div class="details-icon">
+              <i class="fas fa-list-check"></i>
+            </div>
+            <div class="details-text">
+              <h3 id="dietName" class="details-title"></h3>
+              <p class="details-subtitle">Plano Nutricional Completo</p>
+            </div>
+          </div>
+
+          <div class="details-body">
+            <div class="meals-list" id="mealsList"></div>
+          </div>
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="empty-state-card">
+          <div class="empty-icon">
+            <i class="fas fa-utensils"></i>
+          </div>
+          <h3 class="empty-title">Nenhuma Dieta Criada</h3>
+          <p class="empty-description">
+            Comece criando sua primeira dieta alimentar para acompanhar suas
+            refeições e nutrição
+          </p>
+          <button id="createFirstDietBtn" class="btn-empty-action">
+            <i class="fas fa-plus-circle"></i>
+            <span>Criar Primeira Dieta</span>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <script src="js/darkmode.js"></script>
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script type="module" src="js/diet-dashboard.js"></script>
+  </body>
+</html>

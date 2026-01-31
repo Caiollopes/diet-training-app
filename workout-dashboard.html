@@ -23,108 +23,154 @@
     </script>
   </head>
   <body>
-    <div class="page-wrapper">
-      <div class="page-container">
-        <!-- Header -->
-        <div class="page-header">
-          <div class="header-left-actions">
-            <button onclick="history.back()" class="back-btn">
-              <i class="fas fa-arrow-left"></i>
-            </button>
-            <a href="user-home.html" class="home-btn">
-              <i class="fas fa-home"></i>
-            </a>
-          </div>
-          <div class="header-actions">
-            <button id="calendarBtn" class="btn-secondary">
-              <i class="fas fa-calendar"></i>
-            </button>
-            <button id="newWorkoutBtn" class="btn-primary">
-              <i class="fas fa-plus"></i>
-              Novo Treino
-            </button>
-            <button
-              id="editWorkoutBtn"
-              class="btn-primary"
-              style="display: none"
-            >
-              <i class="fas fa-edit"></i>
-              Editar Treino
-            </button>
-            <button id="downloadPDF" class="btn-secondary">
-              <i class="fas fa-file-pdf"></i>
-              Baixar PDF
-            </button>
+    <!-- Header -->
+    <header class="dashboard-header">
+      <div class="header-container">
+        <div class="header-left">
+          <button onclick="history.back()" class="icon-nav-btn">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <a href="user-home.html" class="icon-nav-btn">
+            <i class="fas fa-home"></i>
+          </a>
+          <div class="header-title">
+            <h1 id="username">Meus Treinos</h1>
           </div>
         </div>
 
-        <!-- Conteúdo -->
-        <div class="page-content">
-          <div class="page-title-section">
-            <div class="page-icon">
+        <div class="header-right">
+          <button id="darkModeToggle" class="icon-nav-btn">
+            <i class="fas fa-moon"></i>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="dashboard-main">
+      <div class="dashboard-container">
+        <!-- Action Bar -->
+        <div class="action-bar">
+          <button id="newWorkoutBtn" class="action-btn btn-new">
+            <i class="fas fa-plus"></i>
+            <span>Novo Treino</span>
+          </button>
+
+          <button
+            id="editWorkoutBtn"
+            class="action-btn btn-edit"
+            style="display: none"
+          >
+            <i class="fas fa-edit"></i>
+            <span>Editar</span>
+          </button>
+
+          <button id="calendarBtn" class="action-btn btn-calendar">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Calendário</span>
+          </button>
+
+          <button id="downloadPDF" class="action-btn btn-download">
+            <i class="fas fa-file-pdf"></i>
+            <span>PDF</span>
+          </button>
+        </div>
+
+        <!-- Plan Selector -->
+        <div class="plan-selector-section">
+          <div class="selector-header">
+            <div class="selector-icon">
               <i class="fas fa-dumbbell"></i>
             </div>
-            <h1 id="username" class="page-title">Meus Treinos</h1>
-            <p class="page-subtitle">Acompanhe seus treinos</p>
-
-            <!-- Plan Selector -->
-            <div class="plan-selector" id="planSelector" style="display: none">
-              <label for="workoutPlanSelect">Selecione um treino:</label>
-              <select id="workoutPlanSelect" class="plan-select"></select>
+            <div class="selector-text">
+              <h2 class="selector-title">Plano de Treino Selecionado</h2>
+              <p class="selector-description">
+                Escolha um treino para visualizar os detalhes
+              </p>
             </div>
           </div>
 
-          <!-- Conteúdo do Treino -->
-          <div id="workoutView"></div>
+          <div class="selector-body">
+            <div class="select-wrapper">
+              <i class="fas fa-list select-icon"></i>
+              <select id="workoutPlanSelect" class="plan-select">
+                <option value="">Selecione um treino</option>
+              </select>
+              <i class="fas fa-chevron-down select-arrow"></i>
+            </div>
+          </div>
+        </div>
 
-          <!-- Mensagem inicial -->
-          <div id="emptyState" class="empty-state">
-            <div class="empty-state-icon">
+        <!-- Workout Content -->
+        <div class="workout-content-section">
+          <div id="workoutView" class="workout-view"></div>
+
+          <!-- Empty State -->
+          <div id="emptyState" class="empty-state-card">
+            <div class="empty-icon">
               <i class="fas fa-dumbbell"></i>
             </div>
-            <p class="empty-state-text">Nenhum treino cadastrado</p>
-            <p class="empty-state-subtitle">
-              Clique em "Novo Treino" para começar
+            <h3 class="empty-title">Nenhum treino cadastrado</h3>
+            <p class="empty-description">
+              Comece agora criando seu primeiro treino personalizado
             </p>
+            <button
+              class="empty-action-btn"
+              onclick="document.getElementById('newWorkoutBtn').click()"
+            >
+              <i class="fas fa-plus"></i>
+              Criar meu primeiro treino
+            </button>
           </div>
         </div>
       </div>
-    </div>
+    </main>
 
-    <!-- Modal do Calendário -->
-    <div id="calendarModal" class="calendar-modal" style="display: none">
-      <div class="calendar-modal-content">
-        <div class="calendar-modal-header">
-          <h2>Calendário de Treinos</h2>
-          <button id="closeCalendarBtn" class="close-modal-btn">
+    <!-- Calendar Modal -->
+    <div id="calendarModal" class="modal-overlay" style="display: none">
+      <div class="modal-content calendar-modal">
+        <div class="modal-header">
+          <div class="modal-header-icon">
+            <i class="fas fa-calendar-alt"></i>
+          </div>
+          <h2 class="modal-title">Calendário de Treinos</h2>
+          <button id="closeCalendarBtn" class="modal-close-btn">
             <i class="fas fa-times"></i>
           </button>
         </div>
-        <div class="calendar-navigation">
-          <button id="prevMonthBtn" class="calendar-nav-btn">
-            <i class="fas fa-chevron-left"></i>
-          </button>
-          <h3 id="currentMonthYear"></h3>
-          <button id="nextMonthBtn" class="calendar-nav-btn">
-            <i class="fas fa-chevron-right"></i>
-          </button>
-        </div>
-        <div class="calendar-weekdays">
-          <div class="calendar-weekday">Dom</div>
-          <div class="calendar-weekday">Seg</div>
-          <div class="calendar-weekday">Ter</div>
-          <div class="calendar-weekday">Qua</div>
-          <div class="calendar-weekday">Qui</div>
-          <div class="calendar-weekday">Sex</div>
-          <div class="calendar-weekday">Sáb</div>
-        </div>
-        <div id="calendarDays" class="calendar-days"></div>
-        <div class="calendar-counter">
-          <div class="counter-icon">
-            <i class="fas fa-fire"></i>
+
+        <div class="modal-body">
+          <div class="calendar-nav">
+            <button id="prevMonthBtn" class="calendar-nav-btn">
+              <i class="fas fa-chevron-left"></i>
+            </button>
+            <h3 id="currentMonthYear" class="calendar-current-month"></h3>
+            <button id="nextMonthBtn" class="calendar-nav-btn">
+              <i class="fas fa-chevron-right"></i>
+            </button>
           </div>
-          <div class="counter-text">
-            <span id="trainingCounter">0</span> dias de treino
+
+          <div class="calendar-grid">
+            <div class="calendar-weekdays">
+              <div class="weekday">Dom</div>
+              <div class="weekday">Seg</div>
+              <div class="weekday">Ter</div>
+              <div class="weekday">Qua</div>
+              <div class="weekday">Qui</div>
+              <div class="weekday">Sex</div>
+              <div class="weekday">Sáb</div>
+            </div>
+            <div id="calendarDays" class="calendar-days"></div>
+          </div>
+
+          <div class="training-counter">
+            <div class="counter-badge">
+              <i class="fas fa-fire"></i>
+            </div>
+            <div class="counter-info">
+              <span class="counter-number" id="trainingCounter">0</span>
+              <span class="counter-label">dias de treino marcados</span>
+            </div>
           </div>
         </div>
       </div>

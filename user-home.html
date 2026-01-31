@@ -2,7 +2,8 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <title>Minha Dieta - Dieta & Treino</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Diet Training - Início</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
@@ -21,52 +22,136 @@
     </script>
   </head>
   <body>
-    <main class="user-home-page">
-      <div class="user-home-container">
-        <!-- Header -->
-        <div class="user-home-header">
-          <div class="header-buttons">
-            <button id="darkModeToggle" class="theme-toggle-btn">
-              <i class="fas fa-moon"></i>
-            </button>
-            <button id="logoutBtn" class="logout-btn">
-              <i class="fas fa-sign-out-alt"></i>
-              Sair
-            </button>
+    <!-- Header Navigation -->
+    <header class="home-header">
+      <div class="header-container">
+        <div class="brand">
+          <div class="brand-icon">
+            <i class="fas fa-dumbbell"></i>
           </div>
+          <h1 class="brand-title">Diet Training</h1>
         </div>
 
-        <!-- Welcome Section -->
-        <div class="user-home-content">
-          <div class="welcome-section">
-            <div class="welcome-icon">
+        <div class="header-actions">
+          <button id="darkModeToggle" class="icon-btn">
+            <i class="fas fa-moon"></i>
+          </button>
+          <button id="logoutBtn" class="logout-btn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Sair</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="home-main">
+      <div class="home-container">
+        <!-- Hero Section -->
+        <section class="hero-section">
+          <div class="hero-content">
+            <div class="user-avatar">
               <i class="fas fa-user-circle"></i>
             </div>
-            <h1 id="userName" class="welcome-title">Bem-vindo!</h1>
-            <p class="welcome-subtitle">Gerencie sua dieta e metas</p>
+            <h2 id="userName" class="hero-title">Olá, Usuário!</h2>
+            <p class="hero-subtitle">Pronto para treinar hoje?</p>
           </div>
 
-          <!-- Actions Grid -->
-          <div class="actions-section">
-            <div class="actions-grid">
-              <a href="dashboard.html" class="action-card">
-                <div class="action-icon">
-                  <i class="fas fa-utensils"></i>
-                </div>
-                <h3 class="action-title">Minha Dieta</h3>
-                <p class="action-desc">Veja seu plano alimentar</p>
-              </a>
+          <!-- Quick Stats -->
+          <div class="quick-stats">
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-dumbbell"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value" id="workoutCount">0</span>
+                <span class="stat-label">Treinos</span>
+              </div>
+            </div>
 
-              <a href="workout-dashboard.html" class="action-card">
-                <div class="action-icon">
-                  <i class="fas fa-dumbbell"></i>
-                </div>
-                <h3 class="action-title">Meus Treinos</h3>
-                <p class="action-desc">Gerencie seus treinos</p>
-              </a>
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-utensils"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value" id="dietCount">0</span>
+                <span class="stat-label">Dietas</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-fire"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value" id="trainingDays">0</span>
+                <span class="stat-label">Dias de Treino</span>
+              </div>
+            </div>
+
+            <div class="stat-card">
+              <div class="stat-icon">
+                <i class="fas fa-trophy"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value" id="streakDays">0</span>
+                <span class="stat-label">Sequência</span>
+              </div>
             </div>
           </div>
-        </div>
+        </section>
+
+        <!-- Action Cards Section -->
+        <section class="actions-section">
+          <h3 class="section-title">
+            <i class="fas fa-bolt"></i>
+            Ações Rápidas
+          </h3>
+
+          <div class="action-cards">
+            <a href="workout-dashboard.html" class="main-action-card">
+              <div class="card-icon-wrapper">
+                <div class="card-icon">
+                  <i class="fas fa-dumbbell"></i>
+                </div>
+              </div>
+              <div class="card-content">
+                <h4 class="card-title">Meus Treinos</h4>
+                <p class="card-description">
+                  Gerencie e acompanhe seus treinos
+                </p>
+                <div class="card-arrow">
+                  <i class="fas fa-arrow-right"></i>
+                </div>
+              </div>
+            </a>
+
+            <a href="diet-dashboard.html" class="main-action-card diet-card">
+              <div class="card-icon-wrapper">
+                <div class="card-icon">
+                  <i class="fas fa-utensils"></i>
+                </div>
+              </div>
+              <div class="card-content">
+                <h4 class="card-title">Minhas Dietas</h4>
+                <p class="card-description">
+                  Planeje e acompanhe sua alimentação
+                </p>
+                <div class="card-arrow">
+                  <i class="fas fa-arrow-right"></i>
+                </div>
+              </div>
+            </a>
+          </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="home-footer">
+          <p class="footer-text">
+            <i class="fas fa-heart"></i>
+            Feito para você alcançar seus objetivos
+          </p>
+        </footer>
       </div>
     </main>
 
