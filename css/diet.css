@@ -25,10 +25,9 @@
 .header-actions {
   display: flex;
   flex-direction: row;
-  /* gap: 12px; */
+  gap: 12px;
   align-items: center;
   justify-content: center;
-  /* padding: 10rem; */
 }
 
 .header-actions button {
@@ -96,6 +95,25 @@
 .page-subtitle {
   font-size: 16px;
   color: var(--text-secondary);
+}
+
+.diet-name-edit-input {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+  border: 2px solid var(--button-primary);
+  border-radius: 8px;
+  padding: 8px 16px;
+  text-align: center;
+  outline: none;
+  max-width: 400px;
+  width: 100%;
+}
+
+.diet-name-edit-input:focus {
+  border-color: var(--button-primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .page-actions {

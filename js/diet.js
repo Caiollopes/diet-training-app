@@ -1,4 +1,4 @@
-import { saveDiet, getDiet } from "./supabase-config.js";
+import { saveDiet, getDiet, deleteDietPlan } from "./supabase-config.js";
 
 const phone = localStorage.getItem("currentUser");
 if (!phone) window.location.href = "index.html";
@@ -13,6 +13,7 @@ let currentPlanName = "";
 const buttons = document.querySelectorAll("[data-period]");
 const container = document.getElementById("periodsContainer");
 const saveBtn = document.getElementById("saveDiet");
+const deleteBtn = document.getElementById("deleteDiet");
 const dietNameInput = document.getElementById("dietNameInput");
 const nextBtn = document.getElementById("nextBtn");
 const dietNameSection = document.getElementById("dietNameSection");
@@ -68,6 +69,9 @@ async function loadDiet() {
       dietNameSection.classList.add("hidden");
       dietPeriodsSection.classList.remove("hidden");
       dietNameDisplay.textContent = `Editando: ${plan.name}`;
+
+      // Mostrar botão de deletar
+      deleteBtn.classList.remove("hidden");
     } else {
       dietState = {};
       periodOrder = [];
@@ -115,6 +119,75 @@ dietNameInput.onkeypress = (e) => {
     nextBtn.click();
   }
 };
+
+// Botão de editar nome da dieta
+const editDietNameBtn = document.getElementById("editDietNameBtn");
+if (editDietNameBtn) {
+  editDietNameBtn.onclick = handleEditDietName;
+}
+
+function handleEditDietName() {
+  const nameDisplay = document.getElementById("dietNameDisplay");
+  const editBtn = document.getElementById("editDietNameBtn");
+
+  // Extrair o nome atual (remover "Editando: " ou "Plano: " do texto)
+  const currentText = nameDisplay.textContent;
+  const currentName = currentText.replace(/^(Editando: |Plano: )/, "");
+
+  // Criar input para edição inline
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = currentName;
+  input.className = "diet-name-edit-input";
+  input.maxLength = 50;
+
+  // Substituir título pelo input
+  nameDisplay.style.display = "none";
+  editBtn.style.display = "none";
+  nameDisplay.parentNode.insertBefore(input, nameDisplay);
+  input.focus();
+  input.select();
+
+  // Função para salvar a edição
+  const saveEdit = () => {
+    const newName = input.value.trim();
+
+    if (newName && newName !== currentName) {
+      currentPlanName = newName;
+      dietNameInput.value = newName;
+      const prefix = currentText.startsWith("Editando: ")
+        ? "Editando: "
+        : "Plano: ";
+      nameDisplay.textContent = prefix + newName;
+      localStorage.setItem("currentPlan", newName);
+      console.log("✏️ Nome da dieta alterado para:", newName);
+    }
+
+    // Restaurar título
+    input.remove();
+    nameDisplay.style.display = "";
+    editBtn.style.display = "";
+  };
+
+  // Salvar com Enter
+  input.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      saveEdit();
+    }
+  });
+
+  // Salvar ao perder o foco
+  input.addEventListener("blur", saveEdit);
+
+  // Cancelar com Esc
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      input.remove();
+      nameDisplay.style.display = "";
+      editBtn.style.display = "";
+    }
+  });
+}
 
 buttons.forEach((btn) => {
   btn.onclick = () => {
@@ -325,5 +398,33 @@ saveBtn.onclick = async () => {
   // Aguardar um pouco para o Supabase replicar os dados
   await new Promise((resolve) => setTimeout(resolve, 800));
 
+  window.location.href = "dashboard.html";
+};
+
+deleteBtn.onclick = async () => {
+  const planName = currentPlanName.trim();
+  if (!planName) {
+    alert("Nenhuma dieta selecionada para deletar!");
+    return;
+  }
+
+  if (
+    !confirm(
+      `Tem certeza que deseja deletar a dieta "${planName}"?\n\nEsta ação não pode ser desfeita.`,
+    )
+  ) {
+    return;
+  }
+
+  const { error } = await deleteDietPlan(phone, planName);
+
+  if (error) {
+    alert("Erro ao deletar dieta! Tente novamente.");
+    console.error("Erro ao deletar:", error);
+    return;
+  }
+
+  alert("Dieta deletada com sucesso!");
+  localStorage.removeItem("currentPlan");
   window.location.href = "dashboard.html";
 };

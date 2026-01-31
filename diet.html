@@ -26,14 +26,22 @@
       <div class="page-container">
         <!-- Header -->
         <div class="page-header">
-          <a href="user-home.html" class="back-link">
-            <i class="fas fa-home"></i>
-            Início
-          </a>
+          <div class="header-left-actions">
+            <button onclick="history.back()" class="back-btn">
+              <i class="fas fa-arrow-left"></i>
+            </button>
+            <a href="user-home.html" class="home-btn">
+              <i class="fas fa-home"></i>
+            </a>
+          </div>
           <div class="header-actions">
             <button id="saveDiet" class="btn-primary hidden">
               <i class="fas fa-save"></i>
-              Salvar
+              Salvar Dieta
+            </button>
+            <button id="deleteDiet" class="btn-danger hidden">
+              <i class="fas fa-trash"></i>
+              Deletar Dieta
             </button>
           </div>
         </div>
@@ -74,7 +82,23 @@
                 <i class="fas fa-utensils"></i>
               </div>
               <h1 class="page-title">Monte sua dieta</h1>
-              <p class="page-subtitle" id="dietNameDisplay"></p>
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 8px;
+                "
+              >
+                <p class="page-subtitle" id="dietNameDisplay"></p>
+                <button
+                  id="editDietNameBtn"
+                  class="btn-icon"
+                  title="Editar nome da dieta"
+                >
+                  <i class="fas fa-edit"></i>
+                </button>
+              </div>
             </div>
 
             <div class="period-buttons">

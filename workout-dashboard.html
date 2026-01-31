@@ -27,14 +27,29 @@
       <div class="page-container">
         <!-- Header -->
         <div class="page-header">
-          <a href="user-home.html" class="back-link">
-            <i class="fas fa-home"></i>
-            Início
-          </a>
+          <div class="header-left-actions">
+            <button onclick="history.back()" class="back-btn">
+              <i class="fas fa-arrow-left"></i>
+            </button>
+            <a href="user-home.html" class="home-btn">
+              <i class="fas fa-home"></i>
+            </a>
+          </div>
           <div class="header-actions">
+            <button id="calendarBtn" class="btn-secondary">
+              <i class="fas fa-calendar"></i>
+            </button>
             <button id="newWorkoutBtn" class="btn-primary">
               <i class="fas fa-plus"></i>
               Novo Treino
+            </button>
+            <button
+              id="editWorkoutBtn"
+              class="btn-primary"
+              style="display: none"
+            >
+              <i class="fas fa-edit"></i>
+              Editar Treino
             </button>
             <button id="downloadPDF" class="btn-secondary">
               <i class="fas fa-file-pdf"></i>
@@ -71,6 +86,45 @@
             <p class="empty-state-subtitle">
               Clique em "Novo Treino" para começar
             </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal do Calendário -->
+    <div id="calendarModal" class="calendar-modal" style="display: none">
+      <div class="calendar-modal-content">
+        <div class="calendar-modal-header">
+          <h2>Calendário de Treinos</h2>
+          <button id="closeCalendarBtn" class="close-modal-btn">
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+        <div class="calendar-navigation">
+          <button id="prevMonthBtn" class="calendar-nav-btn">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <h3 id="currentMonthYear"></h3>
+          <button id="nextMonthBtn" class="calendar-nav-btn">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+        <div class="calendar-weekdays">
+          <div class="calendar-weekday">Dom</div>
+          <div class="calendar-weekday">Seg</div>
+          <div class="calendar-weekday">Ter</div>
+          <div class="calendar-weekday">Qua</div>
+          <div class="calendar-weekday">Qui</div>
+          <div class="calendar-weekday">Sex</div>
+          <div class="calendar-weekday">Sáb</div>
+        </div>
+        <div id="calendarDays" class="calendar-days"></div>
+        <div class="calendar-counter">
+          <div class="counter-icon">
+            <i class="fas fa-fire"></i>
+          </div>
+          <div class="counter-text">
+            <span id="trainingCounter">0</span> dias de treino
           </div>
         </div>
       </div>

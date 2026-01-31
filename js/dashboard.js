@@ -6,6 +6,9 @@ if (!phone) window.location.href = "index.html";
 let userData = null;
 let dietData = null;
 
+// Limpar seleção de plano ao carregar a página
+localStorage.removeItem("currentPlan");
+
 // Mostrar skeleton loader
 showSkeleton();
 
@@ -73,6 +76,13 @@ async function loadData() {
     const planSelect = document.getElementById("planSelect");
     planSelect.innerHTML = "";
 
+    // Adicionar opção padrão
+    const defaultOption = document.createElement("option");
+    defaultOption.value = "";
+    defaultOption.textContent = "Selecione uma dieta";
+    defaultOption.disabled = true;
+    planSelect.appendChild(defaultOption);
+
     dietData.plans.forEach((plan) => {
       const option = document.createElement("option");
       option.value = plan.name;
@@ -80,23 +90,16 @@ async function loadData() {
       planSelect.appendChild(option);
     });
 
-    // Definir plano atual
-    const currentPlan =
-      localStorage.getItem("currentPlan") || dietData.plans[0].name;
-    planSelect.value = currentPlan;
-    localStorage.setItem("currentPlan", currentPlan);
-
-    // Renderizar o plano selecionado
-    const selectedPlan = dietData.plans.find((p) => p.name === currentPlan);
-    if (selectedPlan) {
-      dietData.diet_data = selectedPlan.diet_data;
-      dietData.period_order = selectedPlan.period_order;
-      renderDashboard(dietData);
-    }
+    // Sempre mostrar opção padrão ao carregar
+    planSelect.value = "";
+    document.getElementById("dietView").innerHTML =
+      "<p style='text-align: center; color: var(--text-secondary); padding: 40px;'>Selecione uma dieta para visualizar</p>";
 
     // Event listener para trocar de plano
     planSelect.onchange = (e) => {
       const planName = e.target.value;
+      if (!planName) return;
+
       localStorage.setItem("currentPlan", planName);
       const plan = dietData.plans.find((p) => p.name === planName);
       if (plan) {
@@ -115,15 +118,25 @@ document.getElementById("editDiet").onclick = () => {
   window.location.href = "diet.html";
 };
 
+document.getElementById("createNewDiet").onclick = () => {
+  localStorage.setItem("newPlan", "true");
+  localStorage.removeItem("currentPlan");
+  window.location.href = "diet.html";
+};
+
 document.getElementById("deletePlan").onclick = async () => {
   const planName = localStorage.getItem("currentPlan");
-  
+
   if (!planName) {
     alert("Nenhum plano selecionado");
     return;
   }
 
-  if (!confirm(`Tem certeza que deseja deletar o plano "${planName}"?\n\nEsta ação não pode ser desfeita.`)) {
+  if (
+    !confirm(
+      `Tem certeza que deseja deletar o plano "${planName}"?\n\nEsta ação não pode ser desfeita.`,
+    )
+  ) {
     return;
   }
 

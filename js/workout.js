@@ -87,11 +87,27 @@ function setupEventListeners() {
     });
   }
 
-  // Enter no input de reps
+  // Enter nos inputs de séries e reps
+  const exerciseSets = document.getElementById("exerciseSets");
+  if (exerciseSets) {
+    exerciseSets.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") {
+        // Mover para o próximo input
+        document.getElementById("exerciseReps").focus();
+      }
+    });
+  }
+
   if (exerciseReps) {
     exerciseReps.addEventListener("keypress", (e) => {
       if (e.key === "Enter") handleAddExercise();
     });
+  }
+
+  // Botão Editar Nome do Treino
+  const editWorkoutNameBtn = document.getElementById("editWorkoutNameBtn");
+  if (editWorkoutNameBtn) {
+    editWorkoutNameBtn.addEventListener("click", handleEditWorkoutName);
   }
 }
 
@@ -132,6 +148,61 @@ function loadEditMode() {
 }
 
 // ===== MANIPULADORES DE EVENTOS =====
+function handleEditWorkoutName() {
+  const titleDisplay = document.getElementById("workoutTitleDisplay");
+  const editBtn = document.getElementById("editWorkoutNameBtn");
+
+  // Criar input para edição inline
+  const input = document.createElement("input");
+  input.type = "text";
+  input.value = currentWorkoutName;
+  input.className = "workout-name-edit-input";
+  input.maxLength = 50;
+
+  // Substituir título pelo input
+  titleDisplay.style.display = "none";
+  editBtn.style.display = "none";
+  titleDisplay.parentNode.insertBefore(input, titleDisplay);
+  input.focus();
+  input.select();
+
+  // Função para salvar a edição
+  const saveEdit = () => {
+    const newName = input.value.trim();
+
+    if (newName && newName !== currentWorkoutName) {
+      currentWorkoutName = newName;
+      document.getElementById("workoutName").value = newName;
+      titleDisplay.textContent = newName;
+      console.log("✏️ Nome do treino alterado para:", newName);
+    }
+
+    // Restaurar título
+    input.remove();
+    titleDisplay.style.display = "";
+    editBtn.style.display = "";
+  };
+
+  // Salvar com Enter
+  input.addEventListener("keypress", (e) => {
+    if (e.key === "Enter") {
+      saveEdit();
+    }
+  });
+
+  // Salvar ao perder o foco
+  input.addEventListener("blur", saveEdit);
+
+  // Cancelar com Esc
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      input.remove();
+      titleDisplay.style.display = "";
+      editBtn.style.display = "";
+    }
+  });
+}
+
 function handleNextClick() {
   const name = document.getElementById("workoutName").value.trim();
 
@@ -150,6 +221,7 @@ function handleNextClick() {
 
   // Limpar inputs
   document.getElementById("exerciseName").value = "";
+  document.getElementById("exerciseSets").value = "";
   document.getElementById("exerciseReps").value = "";
   document.getElementById("exerciseName").focus();
 
@@ -169,18 +241,22 @@ function handleBackClick() {
 
 function handleAddExercise() {
   const name = document.getElementById("exerciseName").value.trim();
+  const sets = document.getElementById("exerciseSets").value.trim();
   const reps = document.getElementById("exerciseReps").value.trim();
 
-  if (!name || !reps) {
-    alert("Preencha o nome e as repetições do exercício");
+  if (!name || !sets || !reps) {
+    alert("Preencha o nome, séries e repetições do exercício");
     return;
   }
 
   const exerciseKey = Date.now().toString();
-  workoutState[exerciseKey] = { name, reps };
+  const repsFormatted = `${sets}x${reps}`;
+  const nameUpperCase = name.toUpperCase();
+  workoutState[exerciseKey] = { name: nameUpperCase, reps: repsFormatted };
 
   // Limpar inputs
   document.getElementById("exerciseName").value = "";
+  document.getElementById("exerciseSets").value = "";
   document.getElementById("exerciseReps").value = "";
   document.getElementById("exerciseName").focus();
 
@@ -296,6 +372,11 @@ function renderExercisesList() {
     card.className = "exercise-card";
 
     if (isEditing) {
+      // Separar séries e repetições do formato "3x10"
+      const repsParts = exercise.reps.split("x");
+      const sets = repsParts[0] || "";
+      const reps = repsParts[1] || "";
+
       // Modo de edição
       card.innerHTML = `
         <div class="exercise-edit-form">
@@ -310,14 +391,27 @@ function renderExercisesList() {
             />
           </div>
           <div class="form-group">
-            <label for="editExerciseReps-${key}">Séries x Repetições:</label>
-            <input
-              type="text"
-              id="editExerciseReps-${key}"
-              class="form-input"
-              value="${exercise.reps}"
-              placeholder="Ex: 3x10"
-            />
+            <label>Séries x Repetições:</label>
+            <div class="reps-input-group">
+              <input
+                type="number"
+                id="editExerciseSets-${key}"
+                class="form-input"
+                value="${sets}"
+                placeholder="3"
+                min="1"
+                max="99"
+              />
+              <span class="reps-separator">x</span>
+              <input
+                type="text"
+                id="editExerciseReps-${key}"
+                class="form-input"
+                value="${reps}"
+                placeholder="10"
+                maxlength="20"
+              />
+            </div>
           </div>
           <div class="form-actions">
             <button class="btn-save" type="button" onclick="saveEditExercise('${key}')">
@@ -368,22 +462,27 @@ window.saveEditExercise = function (key) {
   const newName = document
     .getElementById(`editExerciseName-${key}`)
     .value.trim();
+  const newSets = document
+    .getElementById(`editExerciseSets-${key}`)
+    .value.trim();
   const newReps = document
     .getElementById(`editExerciseReps-${key}`)
     .value.trim();
 
-  if (!newName || !newReps) {
-    alert("Preencha nome e séries/repetições");
+  if (!newName || !newSets || !newReps) {
+    alert("Preencha nome, séries e repetições");
     return;
   }
 
-  workoutState[key] = { name: newName, reps: newReps };
+  const repsFormatted = `${newSets}x${newReps}`;
+  const nameUpperCase = newName.toUpperCase();
+  workoutState[key] = { name: nameUpperCase, reps: repsFormatted };
   editingExerciseKey = null;
   renderExercisesList();
   console.log("✅ Exercício atualizado:", {
     key,
-    name: newName,
-    reps: newReps,
+    name: nameUpperCase,
+    reps: repsFormatted,
   });
 };
 

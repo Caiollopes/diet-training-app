@@ -45,10 +45,22 @@ function setupEventListeners() {
     });
   }
 
+  const editWorkoutBtn = document.getElementById("editWorkoutBtn");
+  if (editWorkoutBtn) {
+    editWorkoutBtn.addEventListener("click", handleEditWorkout);
+  }
+
   const workoutPlanSelect = document.getElementById("workoutPlanSelect");
   if (workoutPlanSelect) {
     workoutPlanSelect.addEventListener("change", (e) => {
       currentPlan = e.target.value;
+      if (currentPlan) {
+        // Desabilitar a opção padrão após primeira seleção
+        const defaultOption = e.target.querySelector('option[value=""]');
+        if (defaultOption) {
+          defaultOption.disabled = true;
+        }
+      }
       renderWorkoutContent();
     });
   }
@@ -57,6 +69,36 @@ function setupEventListeners() {
   const downloadPDF = document.getElementById("downloadPDF");
   if (downloadPDF) {
     downloadPDF.addEventListener("click", handleDownloadPDF);
+  }
+
+  // Botão de calendário
+  const calendarBtn = document.getElementById("calendarBtn");
+  if (calendarBtn) {
+    calendarBtn.addEventListener("click", openCalendar);
+  }
+
+  const closeCalendarBtn = document.getElementById("closeCalendarBtn");
+  if (closeCalendarBtn) {
+    closeCalendarBtn.addEventListener("click", closeCalendar);
+  }
+
+  const calendarModal = document.getElementById("calendarModal");
+  if (calendarModal) {
+    calendarModal.addEventListener("click", (e) => {
+      if (e.target === calendarModal) {
+        closeCalendar();
+      }
+    });
+  }
+
+  const prevMonthBtn = document.getElementById("prevMonthBtn");
+  if (prevMonthBtn) {
+    prevMonthBtn.addEventListener("click", () => changeMonth(-1));
+  }
+
+  const nextMonthBtn = document.getElementById("nextMonthBtn");
+  if (nextMonthBtn) {
+    nextMonthBtn.addEventListener("click", () => changeMonth(1));
   }
 }
 
@@ -111,7 +153,8 @@ function renderDashboard() {
 
     // Renderizar seletor de planos
     const select = document.getElementById("workoutPlanSelect");
-    select.innerHTML = '<option value="">Selecione um treino...</option>';
+    const defaultOption = '<option value="" disabled selected>Selecione um treino...</option>';
+    select.innerHTML = defaultOption;
 
     allWorkouts.forEach((workout, index) => {
       const option = document.createElement("option");
@@ -120,9 +163,14 @@ function renderDashboard() {
       select.appendChild(option);
     });
 
+    // Resetar currentPlan para garantir que nenhum treino venha pré-selecionado
+    currentPlan = null;
+
     if (!currentPlan) {
       document.getElementById("workoutView").innerHTML = "";
     } else {
+      // Desabilitar a opção padrão após seleção
+      select.querySelector('option[value=""]').disabled = true;
       renderWorkoutContent();
     }
   }
@@ -163,22 +211,12 @@ function renderWorkoutContent() {
 
   html += "</div></div>";
 
-  // Adicionar botão de editar
-  html += `
-    <div class="workout-actions">
-      <button id="editWorkoutBtn" class="btn-primary">
-        <i class="fas fa-edit"></i>
-        Editar Treino
-      </button>
-    </div>
-  `;
-
   document.getElementById("workoutView").innerHTML = html;
 
-  // Adicionar event listener ao botão de editar
+  // Mostrar botão de editar no header
   const editBtn = document.getElementById("editWorkoutBtn");
   if (editBtn) {
-    editBtn.addEventListener("click", handleEditWorkout);
+    editBtn.style.display = "inline-flex";
   }
 }
 
@@ -258,6 +296,143 @@ function handleDownloadPDF() {
 
   // Gerar PDF
   html2pdf().set(options).from(element).save();
+}
+
+// ===== CALENDÁRIO =====
+let currentCalendarDate = new Date();
+let markedDates = new Set();
+
+// Carregar datas marcadas do localStorage
+function loadMarkedDates() {
+  const saved = localStorage.getItem(`workout_calendar_${currentUser}`);
+  if (saved) {
+    markedDates = new Set(JSON.parse(saved));
+  }
+}
+
+// Salvar datas marcadas no localStorage
+function saveMarkedDates() {
+  localStorage.setItem(
+    `workout_calendar_${currentUser}`,
+    JSON.stringify([...markedDates]),
+  );
+}
+
+function openCalendar() {
+  loadMarkedDates();
+  renderCalendar();
+  updateCounter();
+  document.getElementById("calendarModal").style.display = "flex";
+}
+
+function closeCalendar() {
+  document.getElementById("calendarModal").style.display = "none";
+}
+
+function updateCounter() {
+  const count = markedDates.size;
+  document.getElementById("trainingCounter").textContent = count;
+}
+
+function changeMonth(delta) {
+  currentCalendarDate.setMonth(currentCalendarDate.getMonth() + delta);
+  renderCalendar();
+}
+
+function renderCalendar() {
+  const year = currentCalendarDate.getFullYear();
+  const month = currentCalendarDate.getMonth();
+
+  // Atualizar título
+  const monthNames = [
+    "Janeiro",
+    "Fevereiro",
+    "Março",
+    "Abril",
+    "Maio",
+    "Junho",
+    "Julho",
+    "Agosto",
+    "Setembro",
+    "Outubro",
+    "Novembro",
+    "Dezembro",
+  ];
+  document.getElementById("currentMonthYear").textContent =
+    `${monthNames[month]} ${year}`;
+
+  // Calcular dias do mês
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const daysInPrevMonth = new Date(year, month, 0).getDate();
+
+  const calendarDays = document.getElementById("calendarDays");
+  calendarDays.innerHTML = "";
+
+  const today = new Date();
+  const isCurrentMonth =
+    today.getFullYear() === year && today.getMonth() === month;
+  const todayDate = today.getDate();
+
+  // Dias do mês anterior
+  for (let i = firstDay - 1; i >= 0; i--) {
+    const day = daysInPrevMonth - i;
+    const dayEl = createDayElement(day, true, false, false);
+    calendarDays.appendChild(dayEl);
+  }
+
+  // Dias do mês atual
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+    const isToday = isCurrentMonth && day === todayDate;
+    const isMarked = markedDates.has(dateStr);
+    const dayEl = createDayElement(day, false, isToday, isMarked, dateStr);
+    calendarDays.appendChild(dayEl);
+  }
+
+  // Dias do próximo mês
+  const totalCells = calendarDays.children.length;
+  const remainingCells = 42 - totalCells; // 6 semanas x 7 dias
+  for (let i = 1; i <= remainingCells; i++) {
+    const dayEl = createDayElement(i, true, false, false);
+    calendarDays.appendChild(dayEl);
+  }
+}
+
+function createDayElement(day, isOtherMonth, isToday, isMarked, dateStr) {
+  const dayEl = document.createElement("div");
+  dayEl.className = "calendar-day";
+  dayEl.textContent = day;
+
+  if (isOtherMonth) {
+    dayEl.classList.add("other-month");
+  }
+
+  if (isToday) {
+    dayEl.classList.add("today");
+  }
+
+  if (isMarked) {
+    dayEl.classList.add("marked");
+  }
+
+  if (!isOtherMonth && dateStr) {
+    dayEl.addEventListener("click", () => toggleDate(dateStr, dayEl));
+  }
+
+  return dayEl;
+}
+
+function toggleDate(dateStr, element) {
+  if (markedDates.has(dateStr)) {
+    markedDates.delete(dateStr);
+    element.classList.remove("marked");
+  } else {
+    markedDates.add(dateStr);
+    element.classList.add("marked");
+  }
+  saveMarkedDates();
+  updateCounter();
 }
 
 // Inicializar

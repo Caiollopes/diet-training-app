@@ -16,10 +16,14 @@
       <div class="page-container">
         <!-- Header -->
         <div class="page-header">
-          <a href="user-home.html" class="back-link">
-            <i class="fas fa-arrow-left"></i>
-            Voltar
-          </a>
+          <div class="header-left-actions">
+            <button onclick="history.back()" class="back-btn">
+              <i class="fas fa-arrow-left"></i>
+            </button>
+            <a href="user-home.html" class="home-btn">
+              <i class="fas fa-home"></i>
+            </a>
+          </div>
           <div class="header-actions">
             <button id="savBtn" class="btn-primary">
               <i class="fas fa-save"></i>
@@ -70,7 +74,23 @@
               <div class="page-icon">
                 <i class="fas fa-list-check"></i>
               </div>
-              <h1 class="page-title" id="workoutTitleDisplay"></h1>
+              <div
+                style="
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 8px;
+                "
+              >
+                <h1 class="page-title" id="workoutTitleDisplay"></h1>
+                <button
+                  id="editWorkoutNameBtn"
+                  class="btn-icon"
+                  title="Editar nome do treino"
+                >
+                  <i class="fas fa-edit"></i>
+                </button>
+              </div>
               <p class="page-subtitle">Adicione os exercícios</p>
             </div>
 
@@ -90,13 +110,23 @@
               </div>
 
               <div class="form-group">
-                <label for="exerciseReps">Repetições/Series *</label>
-                <input
-                  type="text"
-                  id="exerciseReps"
-                  placeholder="Ex: 3x10, 4x8, 2x12..."
-                  maxlength="30"
-                />
+                <label>Séries x Repetições *</label>
+                <div class="reps-input-group">
+                  <input
+                    type="number"
+                    id="exerciseSets"
+                    placeholder="3"
+                    min="1"
+                    max="99"
+                  />
+                  <span class="reps-separator">x</span>
+                  <input
+                    type="text"
+                    id="exerciseReps"
+                    placeholder="10"
+                    maxlength="20"
+                  />
+                </div>
               </div>
 
               <button
@@ -106,14 +136,6 @@
               >
                 <i class="fas fa-plus"></i>
                 Adicionar Exercício
-              </button>
-            </div>
-
-            <!-- Ações -->
-            <div class="page-actions" style="margin-top: 32px">
-              <button id="backBtn" class="btn-secondary">
-                <i class="fas fa-arrow-left"></i>
-                Voltar
               </button>
             </div>
           </div>

@@ -27,14 +27,22 @@
       <div class="page-container">
         <!-- Header -->
         <div class="page-header">
-          <a href="user-home.html" class="back-link">
-            <i class="fas fa-home"></i>
-            Início
-          </a>
+          <div class="header-left-actions">
+            <button onclick="history.back()" class="back-btn">
+              <i class="fas fa-arrow-left"></i>
+            </button>
+            <a href="user-home.html" class="home-btn">
+              <i class="fas fa-home"></i>
+            </a>
+          </div>
           <div class="header-actions">
+            <button id="createNewDiet" class="btn-primary">
+              <i class="fas fa-plus"></i>
+              Nova Dieta
+            </button>
             <button id="editDiet" class="btn-primary">
               <i class="fas fa-edit"></i>
-              Editar
+              Editar Dieta
             </button>
             <button id="downloadPDF" class="btn-secondary">
               <i class="fas fa-file-pdf"></i>
