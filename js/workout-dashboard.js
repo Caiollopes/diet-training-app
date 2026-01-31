@@ -153,7 +153,8 @@ function renderDashboard() {
 
     // Renderizar seletor de planos
     const select = document.getElementById("workoutPlanSelect");
-    const defaultOption = '<option value="" disabled selected>Selecione um treino...</option>';
+    const defaultOption =
+      '<option value="" disabled selected>Selecione um treino...</option>';
     select.innerHTML = defaultOption;
 
     allWorkouts.forEach((workout, index) => {
